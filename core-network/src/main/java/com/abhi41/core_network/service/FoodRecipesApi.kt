@@ -10,5 +10,5 @@ interface FoodRecipesApi {
     @GET("/recipes/complexSearch")
     suspend fun getRecipies(
         @QueryMap queries: Map<String, String>
-    ): Response<FoodRecipeDto>
+    ): FoodRecipeDto
 }

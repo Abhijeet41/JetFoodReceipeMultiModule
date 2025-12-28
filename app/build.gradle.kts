@@ -1,8 +1,10 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt )
+    alias(libs.plugins.kotlin.serialization)
    // alias(libs.plugins.ksp)
     kotlin("kapt")
 }
@@ -44,6 +46,12 @@ android {
 
 dependencies {
 
+    implementation(project(":core-network"))
+    implementation(project(":receipe:domain"))
+    implementation(project(":receipe:presentation"))
+    implementation(project(":receipe:data"))
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -56,6 +64,8 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.navigation.compose)
 
 
 
