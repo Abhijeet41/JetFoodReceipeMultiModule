@@ -45,8 +45,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
-    // Compose Destinations
-
+    implementation(libs.coil.compose)
+    implementation(libs.jsoup)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

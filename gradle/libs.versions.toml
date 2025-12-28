@@ -25,6 +25,7 @@ ksp = "2.0.21-1.0.25" # <-- Add this line
 compose-destinations = "2.2.0"
 activity = "1.12.2"
 constraintlayout = "2.2.1" # Add this line
+jsoup = "1.18.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -72,6 +73,8 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" } # <-- Add this line
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
