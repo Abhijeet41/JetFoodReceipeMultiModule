@@ -47,6 +47,7 @@ android {
 dependencies {
 
     implementation(project(":core-network"))
+    implementation(project(":core-database"))
     implementation(project(":receipe:domain"))
     implementation(project(":receipe:presentation"))
     implementation(project(":receipe:data"))

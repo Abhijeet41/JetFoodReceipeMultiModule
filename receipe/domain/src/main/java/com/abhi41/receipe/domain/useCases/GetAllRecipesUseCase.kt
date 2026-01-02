@@ -1,6 +1,6 @@
 package com.abhi41.receipe.domain.useCases
 
-import com.abhi41.receipe.domain.models.Result
+import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.domain.repository.RecipesRepository
 import com.abhi41.receipe.domain.utils.Resource
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ class GetAllRecipesUseCase @Inject constructor(
     private val repository: RecipesRepository
 ){
 
-    operator fun invoke(queries: Map<String, String>): Flow<Resource<List<Result>>>{
+    operator fun invoke(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>>{
         if (queries.isEmpty()){
             return flow {}
         }

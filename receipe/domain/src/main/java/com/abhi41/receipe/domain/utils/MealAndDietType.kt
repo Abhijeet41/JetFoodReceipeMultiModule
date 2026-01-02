@@ -1,7 +1,7 @@
-package com.abhi41.receipe.presentation.common
+package com.abhi41.receipe.domain.utils
 
-import com.abhi41.receipe.presentation.utils.Constants.DEFAULT_DIET_TYPE
-import com.abhi41.receipe.presentation.utils.Constants.DEFAULT_MEAL_TYPE
+import com.abhi41.receipe.domain.utils.Constants.DEFAULT_DIET_TYPE
+import com.abhi41.receipe.domain.utils.Constants.DEFAULT_MEAL_TYPE
 
 class MealType {
     companion object {
@@ -40,4 +40,9 @@ data class Meal(
 
 data class Diet(
     var diet: String
+)
+
+data class MealAndDietType(
+    val selectedMealType: String,
+    val selectedDietType: String,
 )

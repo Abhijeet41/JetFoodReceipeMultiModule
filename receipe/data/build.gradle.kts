@@ -39,10 +39,12 @@ dependencies {
 
     implementation(project(":core-network"))
     implementation(project(":receipe:domain"))
+    implementation(project(":core-database"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.datastore.preferences)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

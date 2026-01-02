@@ -1,0 +1,79 @@
+  {
+    ConstraintSets: {
+      start: {
+        imgFood: {
+          width: "spread",
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['parent', 'top', 0],
+        },
+        title_and_category:{
+          width: "spread",
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['imgFood', 'bottom', 0],
+        },
+        description: {
+          width: "spread",
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['title_and_category', 'bottom', 5],
+        }
+      },
+      end: {
+        imgFood: {
+          width: "spread",
+          height: 1,
+          alpha: 0,
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['parent', 'top', 0],
+        },
+        title_and_category:{
+          width: "spread",
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['imgFood', 'bottom', 0],
+        },
+        description: {
+          width: "spread",
+          start: ['parent', 'start', 0],
+          end: ['parent', 'end', 0],
+          top: ['title_and_category', 'bottom', 10],
+          bottom: ['parent', 'bottom', 2],
+        }
+      }
+    },
+    Transitions: {
+      default: {
+        from: 'start',
+        to: 'end',
+        onSwipe: {
+          anchor: 'title_and_category',
+          direction: 'up',
+          side: 'top'
+        },
+        KeyFrames: {
+          KeyPositions: [
+            {
+              target: ['imgFood'],
+              frames: [25, 50, 75],
+              percentX: [0.4, 0.8, 0.1],
+            //  percentY: [0.4, 0.8, 0.3]
+            }
+          ],
+          KeyCycles: [
+            {
+              target: ['imgFood'],
+              frames: [0, 50, 100],
+              //period: [0 , 2 , 0],
+              //rotationX: [0, 45, 0],
+              translationY: [0, 45, 0],
+            //  rotationY: [0, 45, 0],
+            }
+          ]
+        }
+      }
+    }
+
+  }

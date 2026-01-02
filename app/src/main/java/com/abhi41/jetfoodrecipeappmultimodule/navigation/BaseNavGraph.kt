@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 interface BaseNavGraph {
 
     fun build(
-        modifier: Modifier = Modifier.Companion,
+        modifier: Modifier = Modifier,
         navController: NavHostController,
         navGraphBuilder: NavGraphBuilder
     )

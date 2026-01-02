@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt )
     // alias(libs.plugins.ksp)
+    id ("kotlin-parcelize")
+    alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
 
@@ -39,6 +41,9 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

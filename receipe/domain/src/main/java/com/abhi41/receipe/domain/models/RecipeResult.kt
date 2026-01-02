@@ -1,6 +1,8 @@
 package com.abhi41.receipe.domain.models
+import kotlinx.serialization.Serializable
 
-data class Result(
+@Serializable
+data class RecipeResult(
     val aggregateLikes: Int,
     val cheap: Boolean,
     val dairyFree: Boolean,
@@ -18,7 +20,7 @@ data class Result(
     val veryHealthy: Boolean,
 )
 
-
+@Serializable
 data class ExtendedIngredien(
     val amount: Double,
     val consistency: String,
@@ -29,5 +31,5 @@ data class ExtendedIngredien(
 )
 
 data class FoodRecipe(
-    val results: List<Result>
+    val recipeResults: List<RecipeResult>
 )

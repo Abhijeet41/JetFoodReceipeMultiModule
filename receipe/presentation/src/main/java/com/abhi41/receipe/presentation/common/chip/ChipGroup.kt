@@ -1,15 +1,23 @@
 package com.abhi41.receipe.presentation.common.chip
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.abhi41.receipe.presentation.common.Diet
-import com.abhi41.receipe.presentation.common.DietType
-import com.abhi41.receipe.presentation.common.Meal
-import com.abhi41.receipe.presentation.common.MealType
+import androidx.compose.ui.unit.dp
+import com.abhi41.receipe.domain.utils.Diet
+import com.abhi41.receipe.domain.utils.DietType
+import com.abhi41.receipe.domain.utils.Meal
+import com.abhi41.receipe.domain.utils.MealType
 import com.abhi41.receipe.ui.theme.SMALL_PADDING
 
 
@@ -31,6 +39,8 @@ fun MealTypeChipGroup(
             )
         }
     }
+
+
 }
 
 @Composable

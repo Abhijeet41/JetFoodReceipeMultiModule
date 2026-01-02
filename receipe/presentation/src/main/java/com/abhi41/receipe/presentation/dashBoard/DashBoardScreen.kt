@@ -4,9 +4,7 @@ package com.abhi41.receipe.presentation.dashBoard
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.activity.result.launch
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,8 +42,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -55,34 +53,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.abhi41.receipe.domain.models.RecipeResult
+import com.abhi41.receipe.domain.utils.Diet
+import com.abhi41.receipe.domain.utils.DietType
+import com.abhi41.receipe.domain.utils.Meal
+import com.abhi41.receipe.domain.utils.MealType
 import com.abhi41.receipe.presentation.R
-import com.abhi41.receipe.presentation.common.Diet
-import com.abhi41.receipe.presentation.common.DietType
-import com.abhi41.receipe.presentation.common.Meal
-import com.abhi41.receipe.presentation.common.MealType
 import com.abhi41.receipe.presentation.common.chip.DietTypeChipGroup
 import com.abhi41.receipe.presentation.common.chip.MealTypeChipGroup
 import com.abhi41.receipe.presentation.favorite.FavoritesScreen
 import com.abhi41.receipe.presentation.joke.JokeScreen
 import com.abhi41.receipe.presentation.recipes.RecipesScreen
-import com.abhi41.receipe.presentation.utils.Constants.DEFAULT_DIET_TYPE
-import com.abhi41.receipe.presentation.utils.Constants.DEFAULT_MEAL_TYPE
+import com.abhi41.receipe.presentation.recipes.RecipesViewModel
 import com.abhi41.receipe.ui.theme.LARGE_PADDING
-import com.abhi41.receipe.ui.theme.MEDIUM_PADDING
 import com.abhi41.receipe.ui.theme.SMALL_PADDING
 import com.abhi41.receipe.ui.theme.TXT_MEDIUM_SIZE
 import com.abhi41.receipe.ui.theme.buttonColor
 import com.abhi41.receipe.ui.theme.titleColor
 import com.abhi41.receipe.ui.theme.topAppBarBackgroundColor
 import com.abhi41.receipe.ui.theme.topAppBarContentColor
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashBoardScreen(modifier: Modifier = Modifier) {
+fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeResult) -> Unit) {
     val navController: NavHostController = rememberNavController()
     // 2. Get the current route to use in the BackHandler logic
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -95,25 +92,19 @@ fun DashBoardScreen(modifier: Modifier = Modifier) {
     )
     // 3. Get the OnBackPressedDispatcher to manually trigger a back press
     val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
+    val backHandlingEnabled = currentRoute != BottomNavScreen.Recipes.route
     // 4. Implement the BackHandler
-    BackHandler(enabled = true) {
-        // If we are not on the main "Recipes" screen, navigate back to it
-        if (currentRoute != BottomNavScreen.Recipes.route) {
+    BackHandler(enabled = backHandlingEnabled) {
             navController.navigate(BottomNavScreen.Recipes.route) {
                 popUpTo(navController.graph.startDestinationId)
                 launchSingleTop = true
-            }
-        } else {
-            // Otherwise, if we are on the "Recipes" screen, perform the default back action (exit the app)
-            backPressedDispatcher?.onBackPressed()
         }
     }
 
     // --- Bottom Sheet State ---
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -175,8 +166,10 @@ fun DashBoardScreen(modifier: Modifier = Modifier) {
                 RecipesScreen(
                     Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-
+                        .padding(innerPadding),
+                    onNavigationClick = { result ->
+                        onNavigationClick(result)
+                    }
                 )
             }
             composable(BottomNavScreen.Favorites.route) {
@@ -197,9 +190,9 @@ private fun BottomSheetDesign(
     onSelect: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    var selectedMeal by remember { mutableStateOf(MealType.getMeals().get(0)) }
-    var selectedDiet by remember { mutableStateOf(DietType.getDiets().get(0)) }
+    val viewmodel :RecipesViewModel = hiltViewModel()
+    var selectedMeal = viewmodel.selectedMealType
+    var selectedDiet = viewmodel.selectedDietType
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -224,9 +217,9 @@ private fun BottomSheetDesign(
             )
             MealTypeChipGroup(
                 meals = MealType.getMeals(),
-                selectedMeal = selectedMeal,
+                selectedMeal = selectedMeal.value,
                 onSelectedChange = {text ->
-                 selectedMeal = Meal(text)
+                 selectedMeal.value = Meal(text)
                 }
             )
             Text(
@@ -240,9 +233,9 @@ private fun BottomSheetDesign(
             )
             DietTypeChipGroup(
                 diets = DietType.getDiets(),
-                selectedDiet = selectedDiet,
+                selectedDiet = selectedDiet.value,
                 onSelectedChange = { text ->
-                    selectedDiet = Diet(text)
+                    selectedDiet.value = Diet(text)
                 }
             )
             Spacer(Modifier.height(20.dp))
@@ -253,7 +246,10 @@ private fun BottomSheetDesign(
                 Button(
                     modifier = Modifier
                         .fillMaxWidth(0.4f),
-                    onClick = {},
+                    onClick = {
+                        viewmodel.getRecipes(selectedMeal.value, selectedDiet.value)
+                        onSelect()
+                    },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.buttonColor
@@ -348,5 +344,5 @@ fun BottomNavigationBar(
 @Preview
 @Composable
 private fun DashBoardScreenPrev() {
-    DashBoardScreen(modifier = Modifier)
+    DashBoardScreen(modifier = Modifier){}
 }

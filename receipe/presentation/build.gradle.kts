@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt )
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    id ("kotlin-parcelize")
     kotlin("kapt")
 }
 
@@ -41,12 +43,15 @@ android {
 
 dependencies {
     implementation(project(":receipe:domain"))
-
+    implementation(project(":core-database"))
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.compose.material)
     kapt(libs.hilt.compiler)
     implementation(libs.coil.compose)
     implementation(libs.jsoup)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.constraintlayout.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

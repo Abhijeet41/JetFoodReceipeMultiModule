@@ -11,52 +11,92 @@ import javax.inject.Inject
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.abhi41.receipe.domain.repository.PreferencesRepository
+import com.abhi41.receipe.domain.utils.Diet
+import com.abhi41.receipe.domain.utils.DietType
+import com.abhi41.receipe.domain.utils.Meal
+import com.abhi41.receipe.domain.utils.MealAndDietType
+import com.abhi41.receipe.domain.utils.MealType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val TAG = "RecipesViewModel"
 @HiltViewModel
 class RecipesViewModel @Inject constructor(
-    private val getAllRecipesUseCase: GetAllRecipesUseCase
-) : ViewModel() {
+    private val getAllRecipesUseCase: GetAllRecipesUseCase,
+    private val prefRepo: PreferencesRepository
 
+) : ViewModel() {
+    var selectedMealType = mutableStateOf(MealType.getMeals().get(0))
+    var selectedDietType = mutableStateOf(DietType.getDiets().get(0))
     private val _recipesState = mutableStateOf(RecipesState())
     val recipesState: State<RecipesState> = _recipesState
+    var readPreferences = prefRepo.mealAndDietFlow
+    lateinit var mealAndDietType: MealAndDietType
 
 
+    init {
+        viewModelScope.launch {
+            readPreferences.collect { state ->
+                withContext(Dispatchers.Main) {
+                    selectedMealType.value = Meal(state.selectedMealType)
+                    selectedDietType.value = Diet(state.selectedDietType)
+                    Log.d(TAG, ": Initiated RecipesViewModel")
+                    getRecipes(
+                        mealType = selectedMealType.value,
+                        dietType = selectedDietType.value
+                    )
+                }
+            }
+        }
+    }
 
-    fun getRecipes() {
-       viewModelScope.launch (Dispatchers.IO){
-           getAllRecipesUseCase(
-               queries = applyQuries("", "")
-           ).onEach { result ->
-               when (result) {
-                   is Resource.Success -> {
-                       _recipesState.value = recipesState.value.copy(
-                           recipesItem = result.data ?: emptyList(),
-                           isLoading = false
-                       )
-                   }
+    fun getRecipes(mealType: Meal, dietType: Diet) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getAllRecipesUseCase(
+                queries = applyQuries(mealType.meal, dietType.diet)
+            ).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _recipesState.value = recipesState.value.copy(
+                            recipesItem = result.data ?: emptyList(),
+                            isLoading = false,
+                            error = ""
+                        )
+                        saveMealAndDietType(mealType.meal, dietType.diet)
+                    }
 
-                   is Resource.Error -> {
-                       _recipesState.value = recipesState.value.copy(
-                           recipesItem = result.data ?: emptyList(),
-                           isLoading = false
-                       )
-                   }
+                    is Resource.Error -> {
+                        _recipesState.value = recipesState.value.copy(
+                            recipesItem = result.data ?: emptyList(),
+                            isLoading = false,
+                            error = result.message ?: "Unknow Error"
+                        )
+                    }
 
-                   is Resource.Loading -> {
-                       withContext(Dispatchers.Main) {
-                           _recipesState.value = recipesState.value.copy(
-                               recipesItem = result.data ?: emptyList(),
-                               isLoading = true
-                           )
-                       }
-                   }
-               }
-           }.launchIn(this)
-       }
+                    is Resource.Loading -> {
+                        withContext(Dispatchers.Main) {
+                            _recipesState.value = recipesState.value.copy(
+                                recipesItem = result.data ?: emptyList(),
+                                isLoading = true,
+                                error = ""
+                            )
+                        }
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    private fun saveMealAndDietType(meal: String, diet: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mealAndDietType = MealAndDietType(
+                meal,diet
+            )
+            prefRepo.saveMealAndDietType(mealAndDietType)
+        }
     }
 
     fun applyQuries(
@@ -67,8 +107,8 @@ class RecipesViewModel @Inject constructor(
 
         quries[Constants.QUERY_NUMBER] = "50"
         quries[Constants.QUERY_API_KEY] = Constants.API_KEY
-        quries[Constants.QUERY_TYPE] = "main course"        // "main course"
-        quries[Constants.QUERY_DIET] = "gluten free"                //"gluten free"
+        quries[Constants.QUERY_TYPE] = mealType       // "main course"
+        quries[Constants.QUERY_DIET] = dietType               //"gluten free"
         quries[Constants.QUERY_ADD_RECIPE_INFO] = "true"
         quries[Constants.QUERY_FILL_INGREDIENTS] = "true"
 
