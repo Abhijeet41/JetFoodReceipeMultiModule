@@ -75,7 +75,9 @@ object RecipeNavGraph : BaseNavGraph {
                 DetailedScreen(
                     modifier = modifier.fillMaxSize(),
                     recipeResult = arguments.recipeResult
-                )
+                ){
+                    navController.popBackStack()
+                }
             }
 
         }

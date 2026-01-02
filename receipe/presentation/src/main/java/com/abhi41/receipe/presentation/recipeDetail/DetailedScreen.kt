@@ -1,6 +1,7 @@
 package com.abhi41.receipe.presentation.recipeDetail
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,11 @@ import kotlinx.coroutines.launch
 private const val TAG = "DetailedScreen"
 
 @Composable
-fun DetailedScreen(modifier: Modifier = Modifier, recipeResult: RecipeResult) {
+fun DetailedScreen(
+    modifier: Modifier = Modifier,
+    recipeResult: RecipeResult,
+    onBackClicked: () -> Unit
+) {
     var result by remember { mutableStateOf<RecipeResult?>(null) }
     val tabItems = listOf("Overview", "Ingredients", "Instruction")
     val pagerState = rememberPagerState(
@@ -53,6 +58,19 @@ fun DetailedScreen(modifier: Modifier = Modifier, recipeResult: RecipeResult) {
         }
     )
     val coroutineScope = rememberCoroutineScope()
+    // --- THIS IS THE FIX ---
+    // 3. Add the BackHandler composable
+    BackHandler(enabled = true) {
+        if (pagerState.currentPage > 0) {
+            // If the user is on "Ingredients" or "Instruction", go back to "Overview"
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
+            }
+        }else {
+            // If the user is already on "Overview", perform the normal back action
+            onBackClicked()
+        }
+    }
     LaunchedEffect(key1 = Unit) {
         result = recipeResult
         Log.d(TAG, "DetailedScreen: ${recipeResult.recipeId} ${recipeResult.image}")
@@ -131,13 +149,12 @@ fun HorizontalPagerCompose(
     pagerState: PagerState,
     selectedFoodItem: RecipeResult
 ) {
-    val isScrollEnabled = pagerState.currentPage != 0
     HorizontalPager(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White),
         state = pagerState,
-        userScrollEnabled = isScrollEnabled, // Apply the dynamic scroll state here
+        userScrollEnabled = false, // Apply the dynamic scroll state here
         beyondViewportPageCount = 1
     ) { page ->
         when (page) {

@@ -50,8 +50,7 @@ fun IngredientsScreen(extendedIngredients: List<ExtendedIngredien>?) {
     Scaffold {innerpadding->
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerpadding),
+                .fillMaxWidth(),
             contentPadding = PaddingValues(all = SMALL_PADDING),
             verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
         ) {
