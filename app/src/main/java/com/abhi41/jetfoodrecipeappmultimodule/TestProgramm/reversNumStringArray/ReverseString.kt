@@ -3,14 +3,14 @@ package com.abhi41.jetfoodrecipeappmultimodule.TestProgramm.reversNumStringArray
 fun main() {
     //reverse("Kotlin programmer")
     // reverseNumber(123456)
-    val myArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
-    reverseArrayByCreatingNewOne(myArray)
-   // reverseNumberWithOutConvertedIntoString(123456)
+  /*  val myArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
+    reverseArrayByCreatingNewOne(myArray)*/
+    reverseNumberWithOutConvertedIntoString(123456)
 
 }
 
 
-fun reverse(str: String) {
+fun reverse(str: String)  {
     println("Input: $str")
 
     var result = ""
@@ -65,7 +65,7 @@ fun reverseArrayByCreatingNewOne(char: CharArray) {
 
 }
 
-fun reverseNumberWithOutConvertedIntoString(num: Int) {
+/*fun reverseNumberWithOutConvertedIntoString(num: Int) {
     println("Input: $num")
     var number = num
     var reversedInt = 0
@@ -77,4 +77,16 @@ fun reverseNumberWithOutConvertedIntoString(num: Int) {
     }
     println(reversedInt)
 
+}*/
+
+fun reverseNumberWithOutConvertedIntoString(num: Int) {
+    var number = num
+    var lastDigit = 0
+    var reversedNum = 0
+    while (number > 0){
+        lastDigit = number % 10
+        reversedNum = reversedNum * 10 + lastDigit
+        number = number / 10
+    }
+    println("you reversed number is: $reversedNum")
 }

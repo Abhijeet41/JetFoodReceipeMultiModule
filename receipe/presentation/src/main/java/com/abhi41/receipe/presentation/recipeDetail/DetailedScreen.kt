@@ -75,7 +75,18 @@ fun DetailedScreen(
         result = recipeResult
         Log.d(TAG, "DetailedScreen: ${recipeResult.recipeId} ${recipeResult.image}")
     }
-    Scaffold { innerPadding ->
+    Scaffold (
+        topBar = {
+            DetailedScreenAppBar(
+                onBackArrowClicked = {
+                    onBackClicked()
+                },
+                onFavoriteClicked = {
+
+                }
+            )
+        }
+    ){ innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
