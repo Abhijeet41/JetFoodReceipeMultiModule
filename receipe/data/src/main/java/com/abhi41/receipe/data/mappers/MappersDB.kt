@@ -1,5 +1,6 @@
 package com.abhi41.receipe.data.mappers
 
+import com.abhi41.receipe.data.mappers.toDomainExtendedIngredient
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.recipe.core_database.entity.FavoriteEntity
 
@@ -23,4 +24,27 @@ fun RecipeResult.toFavoriteEntity(): FavoriteEntity {
         sourceName = this.sourceName
     )
 }
+
+//Mapper function to convert from the Database entity BACK TO the Domain model
+fun FavoriteEntity.toRecipeResult(): RecipeResult {
+    return RecipeResult(
+        recipeId = this.recipeId,
+        aggregateLikes = this.aggregateLikes,
+        image = this.image,
+        readyInMinutes = this.readyInMinutes,
+        sourceUrl = this.sourceUrl,
+        summary = this.summary,
+        title = this.title,
+        vegan = this.vegan,
+        vegetarian = this.vegetarian,
+        veryHealthy = this.veryHealthy,
+        cheap = this.cheap,
+        dairyFree = this.dairyFree,
+        extendedIngredients = this.extendedIngredients.toLocalIngredient(), // Assuming you have a reverse mapper for ingredients
+        glutenFree = this.glutenFree,
+        sourceName = this.sourceName
+    )
+}
+
+
 

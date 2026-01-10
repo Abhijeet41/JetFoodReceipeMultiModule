@@ -95,9 +95,9 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
     val backHandlingEnabled = currentRoute != BottomNavScreen.Recipes.route
     // 4. Implement the BackHandler
     BackHandler(enabled = backHandlingEnabled) {
-            navController.navigate(BottomNavScreen.Recipes.route) {
-                popUpTo(navController.graph.startDestinationId)
-                launchSingleTop = true
+        navController.navigate(BottomNavScreen.Recipes.route) {
+            popUpTo(navController.graph.startDestinationId)
+            launchSingleTop = true
         }
     }
 
@@ -139,7 +139,9 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
 
         },
         topBar = {
-            RecipesTopBar() {}
+            if (currentRoute == BottomNavScreen.Recipes.route) {
+                RecipesTopBar() {}
+            }
         },
     ) { innerPadding ->
 
@@ -173,7 +175,11 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
                 )
             }
             composable(BottomNavScreen.Favorites.route) {
-                FavoritesScreen(modifier)
+                FavoritesScreen(
+                    onNavigationClick = { result ->
+                        onNavigationClick(result)
+                    }
+                )
             }
             composable(BottomNavScreen.Joke.route) {
                 JokeScreen(modifier)
@@ -190,7 +196,7 @@ private fun BottomSheetDesign(
     onSelect: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val viewmodel :RecipesViewModel = hiltViewModel()
+    val viewmodel: RecipesViewModel = hiltViewModel()
     var selectedMeal = viewmodel.selectedMealType
     var selectedDiet = viewmodel.selectedDietType
 
@@ -218,8 +224,8 @@ private fun BottomSheetDesign(
             MealTypeChipGroup(
                 meals = MealType.getMeals(),
                 selectedMeal = selectedMeal.value,
-                onSelectedChange = {text ->
-                 selectedMeal.value = Meal(text)
+                onSelectedChange = { text ->
+                    selectedMeal.value = Meal(text)
                 }
             )
             Text(
@@ -255,9 +261,11 @@ private fun BottomSheetDesign(
                         containerColor = MaterialTheme.colorScheme.buttonColor
                     )
                 ) {
-                    Text( text = "Apply",
+                    Text(
+                        text = "Apply",
                         color = White,
-                        textAlign = TextAlign.Center)
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
@@ -344,5 +352,5 @@ fun BottomNavigationBar(
 @Preview
 @Composable
 private fun DashBoardScreenPrev() {
-    DashBoardScreen(modifier = Modifier){}
+    DashBoardScreen(modifier = Modifier) {}
 }

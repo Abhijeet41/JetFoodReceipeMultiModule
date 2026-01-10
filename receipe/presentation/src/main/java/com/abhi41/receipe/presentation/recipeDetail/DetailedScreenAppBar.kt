@@ -1,7 +1,6 @@
 package com.abhi41.receipe.presentation.recipeDetail
 
 import android.content.res.Configuration
-import android.graphics.Color
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,22 +12,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.R
 import com.abhi41.receipe.presentation.utils.HexToJetpackColor
-import com.abhi41.receipe.ui.theme.categoriesIconColor
 import com.abhi41.receipe.ui.theme.darkYello
 import com.abhi41.receipe.ui.theme.titleColor
+import com.abhi41.recipe.core_database.entity.FavoriteEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailedScreenAppBar(
     onBackArrowClicked: () -> Unit,
-    onFavoriteClicked: () -> Unit
+    onFavoriteClicked: (isRecipeSaved: Boolean) -> Unit,
+    favoriteRecipes: List<FavoriteEntity>?,
+    selectedRecipe: RecipeResult?
 ) {
     var isRecipeSaved by remember {
         mutableStateOf(false)
@@ -49,12 +50,22 @@ fun DetailedScreenAppBar(
             }
         },
         actions = {
+
+            if (!favoriteRecipes.isNullOrEmpty()){
+                for (recipe in favoriteRecipes){
+                    if (recipe.recipeId == selectedRecipe?.recipeId){
+                        isRecipeSaved = true
+                    }
+                }
+
+            }
+
             AppBarIcon(
                 icon = R.drawable.ic_favorite,
                 isRecipeSaved = isRecipeSaved,
                 onClick = {
                     isRecipeSaved = !isRecipeSaved
-                    onFavoriteClicked()
+                    onFavoriteClicked(isRecipeSaved)
                 }
             )
         },
@@ -78,6 +89,8 @@ fun AppBarIcon(icon: Int, isRecipeSaved: Boolean = false, onClick: () -> Unit) {
 private fun DetailedScreenAppBarPrev() {
     DetailedScreenAppBar(
         onBackArrowClicked = {},
-        onFavoriteClicked = {}
+        onFavoriteClicked = {},
+        favoriteRecipes = null,
+        selectedRecipe = null
     )
 }

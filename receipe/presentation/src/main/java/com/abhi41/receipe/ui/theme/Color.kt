@@ -88,3 +88,8 @@ val ColorScheme.txtFoodJoke: Color
 val ColorScheme.motionLayoutBg: Color
     @Composable
     get() = if (!isSystemInDarkTheme()) Color.White else Color.Black
+
+
+val ColorScheme.strokeBorderColor: Color
+    @Composable
+    get() = if (!isSystemInDarkTheme()) Purple500 else Green

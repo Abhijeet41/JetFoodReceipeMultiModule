@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(project(":receipe:domain"))
     implementation(project(":core-database"))
+    implementation(project(":receipe:data"))
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.compose.material)
@@ -61,6 +62,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    implementation(libs.androidx.runtime.livedata)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

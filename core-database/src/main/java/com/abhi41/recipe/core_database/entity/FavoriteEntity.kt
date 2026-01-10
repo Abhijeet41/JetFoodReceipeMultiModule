@@ -1,6 +1,5 @@
 package com.abhi41.recipe.core_database.entity
 
-import android.support.v4.os.ResultReceiver
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.abhi41.recipe.core_database.utils.Constants

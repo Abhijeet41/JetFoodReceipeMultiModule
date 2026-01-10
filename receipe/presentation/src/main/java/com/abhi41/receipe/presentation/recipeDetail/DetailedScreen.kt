@@ -4,14 +4,11 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,12 +30,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.ContentAlpha
+import com.abhi41.receipe.data.mappers.toFavoriteEntity
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.recipeDetail.tabs.IngredientsScreen
 import com.abhi41.receipe.presentation.recipeDetail.tabs.InstructionScreen
 import com.abhi41.receipe.presentation.recipeDetail.tabs.OverviewScreen
 import com.abhi41.receipe.ui.theme.tabBackgroundColor
+import com.abhi41.recipe.core_database.entity.FavoriteEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "DetailedScreen"
@@ -46,7 +48,8 @@ private const val TAG = "DetailedScreen"
 fun DetailedScreen(
     modifier: Modifier = Modifier,
     recipeResult: RecipeResult,
-    onBackClicked: () -> Unit
+    detailViewModel: DetailViewModel = hiltViewModel(),
+    onBackClicked: () -> Unit,
 ) {
     var result by remember { mutableStateOf<RecipeResult?>(null) }
     val tabItems = listOf("Overview", "Ingredients", "Instruction")
@@ -66,7 +69,7 @@ fun DetailedScreen(
             coroutineScope.launch {
                 pagerState.animateScrollToPage(0)
             }
-        }else {
+        } else {
             // If the user is already on "Overview", perform the normal back action
             onBackClicked()
         }
@@ -75,18 +78,31 @@ fun DetailedScreen(
         result = recipeResult
         Log.d(TAG, "DetailedScreen: ${recipeResult.recipeId} ${recipeResult.image}")
     }
-    Scaffold (
+    val favoritesRecipes = detailViewModel.readFavoriteRecipes.observeAsState()
+
+    Scaffold(
+
         topBar = {
             DetailedScreenAppBar(
+                favoriteRecipes = favoritesRecipes.value,
+                selectedRecipe = recipeResult,
                 onBackArrowClicked = {
                     onBackClicked()
                 },
-                onFavoriteClicked = {
+                onFavoriteClicked = { isRecipeSaved ->
+                    if (isRecipeSaved) {
+                        detailViewModel.insertFavoriteRecipes(recipes = recipeResult.toFavoriteEntity())
+                    } else {
+                        coroutineScope.launch (Dispatchers.IO){
+                            detailViewModel.deleteFavoriteRecipe(recipeResult.toFavoriteEntity())
+                        }
+                    }
 
                 }
             )
         }
-    ){ innerPadding ->
+    ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
