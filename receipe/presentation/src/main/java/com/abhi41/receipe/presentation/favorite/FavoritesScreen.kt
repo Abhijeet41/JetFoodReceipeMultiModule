@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -119,6 +120,7 @@ fun FavoritesScreen(
                     it.id
                 },
             ) { result ->
+                //this will make sure selectedRecipes border color will gets change
                 val isSelected = selectedRecipes.contains(result)
               val color =  if (isSelected)  MaterialTheme.colorScheme.strokeBorderColor
                            else MaterialTheme.colorScheme.cardStrokeBorder
@@ -144,8 +146,6 @@ fun FavoritesScreen(
                     }
 
                 }
-                //we need to save state because this is a recyclerview it will recycle last selected recipe
-              //  saveItemState(result, state)
             }
         }
     }
@@ -264,13 +264,43 @@ fun applyActionModeTitle(state: MutableState<FavoriteState>) {
     }
 }
 
-private fun saveItemState(
-    foodItem: FavoriteEntity,
-    state: MutableState<FavoriteState>,
-) {
-    if (selectedRecipes.contains(foodItem)) {
-        state.value = state.value.copy(selectedItem = true)
-    } else {
-        state.value = state.value.copy(selectedItem = false)
-    }
+@Preview(showBackground = true)
+@Composable
+private fun FavoriteScreenPreview() {
+    // We don't have a real ViewModel in previews, so we pass a default one.
+    // The onNavigationClick can be an empty lambda as it won't be used in the preview.
+    FavoritesScreen {}
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun FavoriteFoodItemPreview() {
+    // 1. Create a mock 'FavoriteEntity' object to simulate real data.
+    val mockFavorite = FavoriteEntity(
+        id = 1,
+        recipeId = 641803,
+        aggregateLikes = 25,
+        image = "https://spoonacular.com/recipeImages/641803-312x231.jpg",
+        readyInMinutes = 45,
+        sourceUrl = "http://www.foodista.com/recipe/52G86T2N/dutch-oven-bread",
+        summary = "Dutch Oven Bread is a classic recipe that is perfect for any occasion. This bread is soft, fluffy, and has a crispy crust. It is perfect for sandwiches, toast, or just eating on its own.",
+        title = "Dutch Oven Bread",
+        vegan = false,
+        vegetarian = true,
+        veryHealthy = false,
+        cheap = false,
+        dairyFree = false,
+        glutenFree = false,
+        sourceName = "Foodista",
+        extendedIngredients = emptyList()
+    )
+
+    // 2. Call your FavoriteFoodItem composable with the mock data.
+    FavoriteFoodItem(
+        result = mockFavorite,
+        color = MaterialTheme.colorScheme.cardStrokeBorder,
+        onNavigationClick = { /* Clicks are disabled in preview */ },
+        onLongClick = { /* Long clicks are disabled in preview */ }
+    )
+}
+

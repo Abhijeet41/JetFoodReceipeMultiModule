@@ -139,6 +139,7 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
 
         },
         topBar = {
+            // Only show the TopBar if the current route is the Recipes screen
             if (currentRoute == BottomNavScreen.Recipes.route) {
                 RecipesTopBar() {}
             }
