@@ -20,6 +20,8 @@ object RecipeDataModule {
     fun provideRecipeRepository(apiService: FoodRecipesApi, recipesDao: RecipesDao): RecipesRepository {
         return RecipesRepositoryImpl(apiService, recipesDao)
     }
+
+
 }
 
 

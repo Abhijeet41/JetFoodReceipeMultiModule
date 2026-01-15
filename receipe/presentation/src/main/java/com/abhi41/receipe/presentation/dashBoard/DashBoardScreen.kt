@@ -79,7 +79,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeResult) -> Unit) {
+fun DashBoardScreen(
+    modifier: Modifier = Modifier,
+    onNavigationClick: (RecipeResult) -> Unit,
+    onSearchClicked:() ->Unit
+) {
     val navController: NavHostController = rememberNavController()
     // 2. Get the current route to use in the BackHandler logic
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -141,7 +145,9 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
         topBar = {
             // Only show the TopBar if the current route is the Recipes screen
             if (currentRoute == BottomNavScreen.Recipes.route) {
-                RecipesTopBar() {}
+                RecipesTopBar() {
+                    onSearchClicked()
+                }
             }
         },
     ) { innerPadding ->
@@ -167,7 +173,7 @@ fun DashBoardScreen(modifier: Modifier = Modifier, onNavigationClick: (RecipeRes
         ) {
             composable(BottomNavScreen.Recipes.route) {
                 RecipesScreen(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
                     onNavigationClick = { result ->
@@ -353,5 +359,5 @@ fun BottomNavigationBar(
 @Preview
 @Composable
 private fun DashBoardScreenPrev() {
-    DashBoardScreen(modifier = Modifier) {}
+    DashBoardScreen(modifier = Modifier, onNavigationClick = {}, onSearchClicked = {})
 }

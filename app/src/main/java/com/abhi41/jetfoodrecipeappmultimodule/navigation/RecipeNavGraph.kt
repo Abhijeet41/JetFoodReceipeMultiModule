@@ -12,6 +12,7 @@ import com.abhi41.jetfoodrecipeappmultimodule.navigation.navType.ResultNavType
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.dashBoard.DashBoardScreen
 import com.abhi41.receipe.presentation.recipeDetail.DetailedScreen
+import com.abhi41.receipe.presentation.search.SearchScreen
 import com.abhi41.receipe.presentation.splash.SplashScreen
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -36,6 +37,9 @@ object RecipeNavGraph : BaseNavGraph {
         data class DetailedScreen(
             val recipeResult: RecipeResult
         ) : Destination
+
+        @Serializable
+        data object Search : Destination
     }
 
     override fun build(
@@ -58,35 +62,49 @@ object RecipeNavGraph : BaseNavGraph {
                 }
             }
             composable<Destination.Dashboard> {
-                DashBoardScreen(modifier = modifier.fillMaxSize()) { result ->
-                   // navController.navigateToDetails(result)
-                    navController.navigate(
-                        Destination.DetailedScreen(result)
-                    )
-                }
+                DashBoardScreen(
+                    modifier = modifier.fillMaxSize(),
+                    onSearchClicked = {
+                        navController.navigate(
+                            Destination.Search
+                        )
+                    },
+                    onNavigationClick = { result ->
+                        // navController.navigateToDetails(result)
+                        navController.navigate(
+                            Destination.DetailedScreen(result)
+                        )
+                    }
+                )
             }
             composable<Destination.DetailedScreen>(
                 typeMap = mapOf(
                     typeOf<RecipeResult>() to ResultNavType
                 )
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val arguments = backStackEntry.toRoute<Destination.DetailedScreen>()
 
                 DetailedScreen(
                     modifier = modifier.fillMaxSize(),
                     recipeResult = arguments.recipeResult
-                ){
+                ) {
                     navController.popBackStack()
                 }
+            }
+            composable<Destination.Search> {
+                SearchScreen(
+                    onClosedClicked = {
+                        navController.popBackStack()
+                    },
+                    onNavigationClick = {result ->
+                        navController.navigate(
+                            Destination.DetailedScreen(result)
+                        )
+                    }
+                )
             }
 
         }
     }
 }
 
-fun NavController.navigateToDetails(result: RecipeResult) {
-    val json = Json.encodeToString(result)
-    val encoded = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
-
-    navigate("DetailedScreen/$encoded")
-}

@@ -23,34 +23,50 @@ class RecipesRepositoryImpl(
     private val recipesDao: RecipesDao
 ) : RecipesRepository {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    override fun getRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> = flow {
-        emit(Resource.Loading())
-        try {
-            val recipes: List<RecipeResult> = recipesDao.readRecipes().toReadLocalRecipes()
-            emit(Resource.Loading(data = recipes))
-            val result = api.getRecipies(queries)
-            val response = result.results.toDomainRecipes()
-            recipesDao.deleteAllRecipes()
-            recipesDao.insertRecipes(response.toInsertRecipes())
-            Log.d(TAG, "getRecipes: ${response[0].title}")
-       //     emit(Resource.Success(data = response))
-        } catch (e: HttpException) {
-            e.printStackTrace()
-            emit(Resource.Error(message = "Oops, something went wrong!", data = null))
-        } catch (e: IOException) {
-            e.printStackTrace()
-            emit(
-                Resource.Error(
-                    message = "Couldn't reach server, check your internet connection.",
-                    data = null
+    override fun getRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> =
+        flow {
+            emit(Resource.Loading())
+            try {
+                val recipes: List<RecipeResult> = recipesDao.readRecipes().toReadLocalRecipes()
+                emit(Resource.Loading(data = recipes))
+                val result = api.getRecipies(queries)
+                val response = result.results.toDomainRecipes()
+                recipesDao.deleteAllRecipes()
+                recipesDao.insertRecipes(response.toInsertRecipes())
+                Log.d(TAG, "getRecipes: ${response[0].title}")
+                //     emit(Resource.Success(data = response))
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error(message = "Oops, something went wrong!", data = null))
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = "Couldn't reach server, check your internet connection.",
+                        data = null
+                    )
                 )
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(Resource.Error(message = "Oops, something went wrong!", data = null))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Resource.Error(message = "Oops, something went wrong!", data = null))
+            }
+            val newRecipes: List<RecipeResult> = recipesDao.readRecipes().toReadLocalRecipes()
+            emit(Resource.Success(data = newRecipes))
         }
-        val newRecipes: List<RecipeResult> = recipesDao.readRecipes().toReadLocalRecipes()
-        emit(Resource.Success(data = newRecipes))
-    }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    override fun getSearchRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> = flow {
+            emit(Resource.Loading())
+            try {
+                val result = api.searchRecipes(queries)
+                val recipes = result.results.toDomainRecipes()
+                emit(Resource.Loading(data = recipes))
+                emit(Resource.Success(data = recipes))
+            } catch (e: HttpException) {
+                emit(Resource.Error(message ="Oops, something went wrong!", data = emptyList()))
+            } catch (e: IOException) {
+                emit(Resource.Error(message = "Couldn't reach server, check your internet connection.",
+                    data = emptyList()))
+            }
+        }
 }

@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface RecipesRepository {
     fun getRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>>
 
-    // fun getSearchRecipes(queries: Map<String, String>): kotlin.Result<Result>
+     fun getSearchRecipes(queries: Map<String, String>):Flow<Resource<List<RecipeResult>>>
 }
