@@ -1,11 +1,14 @@
 package com.abhi41.receipe.data.mappers
 
+import com.abhi41.core_network.dtos.food_joke.FoodJokeDto
 import com.abhi41.core_network.dtos.receipe.ExtendedIngredientDto
 import com.abhi41.core_network.dtos.receipe.ResultDto
 import com.abhi41.receipe.domain.models.ExtendedIngredien
+import com.abhi41.receipe.domain.models.FoodJoke
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.recipe.core_database.entity.ExtendedIngredient
 import com.abhi41.recipe.core_database.entity.ResultEntity
+import kotlin.collections.map
 
 fun List<ResultDto>.toDomainRecipes(): List<RecipeResult> {
    return map {
@@ -32,7 +35,7 @@ fun List<ResultDto>.toDomainRecipes(): List<RecipeResult> {
 fun List<ExtendedIngredientDto>.toDomainExtendedIngredient(): List<ExtendedIngredien> {
     return map {
         ExtendedIngredien(
-            amount = it.amount,
+            amount = it.amount.toString(),
             consistency = it.consistency,
             image = it.image,
             name = it.name,
@@ -68,7 +71,7 @@ fun List<ResultEntity>.toReadLocalRecipes(): List<RecipeResult> {
 fun List<ExtendedIngredient>.toLocalIngredient(): List<ExtendedIngredien> {
     return map {
         ExtendedIngredien(
-            amount = it.amount,
+            amount = it.amount.toString(),
             consistency = it.consistency,
             image = it.image,
             name = it.name,
@@ -103,7 +106,7 @@ fun List<RecipeResult>.toInsertRecipes(): List<ResultEntity> {
 fun List<ExtendedIngredien>.toIngredient(): List<ExtendedIngredient> {
     return map {
         ExtendedIngredient(
-            amount = it.amount,
+            amount = it.amount.toDouble(),
             consistency = it.consistency,
             image = it.image,
             name = it.name,
@@ -112,5 +115,12 @@ fun List<ExtendedIngredien>.toIngredient(): List<ExtendedIngredient> {
         )
     }
 }
+
+fun FoodJokeDto.toFoodJoke(): FoodJoke{
+    return FoodJoke(
+        text = text
+    )
+}
+
 
 

@@ -43,6 +43,7 @@ import com.abhi41.receipe.presentation.R
 import com.abhi41.receipe.presentation.common.BackPressHandler
 import com.abhi41.receipe.presentation.recipes.HorizontalLikesAndCategory
 import com.abhi41.receipe.ui.theme.FoodRecipe_ITEM_HEIGHT
+import com.abhi41.receipe.ui.theme.JetFoodRecipeAppMultiModuleTheme
 import com.abhi41.receipe.ui.theme.MEDIUM_PADDING
 import com.abhi41.receipe.ui.theme.SMALL_PADDING
 import com.abhi41.receipe.ui.theme.cardStrokeBorder
@@ -106,11 +107,12 @@ fun FavoritesScreen(
             }
         }
     ) { innerPadding ->
+        val topPadding = innerPadding.calculateTopPadding()
 
         LazyColumn(
             modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = topPadding)
+                .fillMaxHeight(),
             contentPadding = PaddingValues(SMALL_PADDING),
             verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
         ) {
@@ -122,8 +124,8 @@ fun FavoritesScreen(
             ) { result ->
                 //this will make sure selectedRecipes border color will gets change
                 val isSelected = selectedRecipes.contains(result)
-              val color =  if (isSelected)  MaterialTheme.colorScheme.strokeBorderColor
-                           else MaterialTheme.colorScheme.cardStrokeBorder
+                val color = if (isSelected) MaterialTheme.colorScheme.strokeBorderColor
+                else MaterialTheme.colorScheme.cardStrokeBorder
 
                 FavoriteFoodItem(result, color, onNavigationClick = {//handle single click event
                     if (state.value.isContextual || state.value.multiSelection) {
@@ -269,7 +271,9 @@ fun applyActionModeTitle(state: MutableState<FavoriteState>) {
 private fun FavoriteScreenPreview() {
     // We don't have a real ViewModel in previews, so we pass a default one.
     // The onNavigationClick can be an empty lambda as it won't be used in the preview.
-    FavoritesScreen {}
+    JetFoodRecipeAppMultiModuleTheme {
+        FavoritesScreen {}
+    }
 }
 
 @Preview(showBackground = true)

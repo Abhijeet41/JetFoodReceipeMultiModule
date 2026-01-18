@@ -64,18 +64,19 @@ fun SearchScreen(
             )
         }
     ){ innerPadding ->
+        val modifier = Modifier
+            .padding(innerPadding)
+
         if (!searchViewModel.searchState.value.isLoading){
             RecipeDesignContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                modifier =modifier.fillMaxSize(),
                 recipesItem = searchRecipes,
                 onNavigationClick = {result ->
                     onNavigationClick(result)
                 }
             )
         }else{
-            AnimatedShimmer()
+            AnimatedShimmer(modifier)
         }
     }
 }

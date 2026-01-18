@@ -6,21 +6,28 @@ import android.util.Log
 import androidx.annotation.RequiresExtension
 import com.abhi41.core_network.service.FoodRecipesApi
 import com.abhi41.receipe.data.mappers.toDomainRecipes
+import com.abhi41.receipe.data.mappers.toFoodJoke
+import com.abhi41.receipe.data.mappers.toFoodJokeEntity
 import com.abhi41.receipe.data.mappers.toInsertRecipes
 import com.abhi41.receipe.data.mappers.toReadLocalRecipes
+import com.abhi41.receipe.domain.models.FoodJoke
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.domain.repository.RecipesRepository
+import com.abhi41.receipe.domain.utils.Constants
 import com.abhi41.receipe.domain.utils.Resource
+import com.abhi41.recipe.core_database.dao.FoodJokeDao
 import com.abhi41.recipe.core_database.dao.RecipesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 private const val TAG = "RecipesRepositoryImpl"
 
 class RecipesRepositoryImpl(
     private val api: FoodRecipesApi,
-    private val recipesDao: RecipesDao
+    private val recipesDao: RecipesDao,
+    private val foodJokeDao: FoodJokeDao
 ) : RecipesRepository {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun getRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> =
@@ -33,7 +40,7 @@ class RecipesRepositoryImpl(
                 val response = result.results.toDomainRecipes()
                 recipesDao.deleteAllRecipes()
                 recipesDao.insertRecipes(response.toInsertRecipes())
-                Log.d(TAG, "getRecipes: ${response[0].title}")
+                //Log.d(TAG, "getRecipes: ${response.joinToString()}")
                 //     emit(Resource.Success(data = response))
             } catch (e: HttpException) {
                 e.printStackTrace()
@@ -69,4 +76,26 @@ class RecipesRepositoryImpl(
                     data = emptyList()))
             }
         }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    override fun getFoodJokes(): Flow<Resource<List<FoodJoke>>> = flow {
+        emit(Resource.Loading())
+        val foodJokes: List<FoodJoke> = foodJokeDao.readFoodJoke().map { it.toFoodJoke() }
+        emit(Resource.Loading(data = foodJokes))
+        try {
+            val remoteFoodJokes = api.getFoodJoke(apiKey = Constants.API_KEY)
+            if (remoteFoodJokes != null){
+                foodJokeDao.deleteAllFoodJoke()
+                foodJokeDao.insertFoodJoke(remoteFoodJokes.toFoodJokeEntity())
+            }
+
+        } catch (e: HttpException) {
+            emit(Resource.Error(message ="Oops, something went wrong!", data = emptyList()))
+        } catch (e: IOException) {
+            emit(Resource.Error(message = "Couldn't reach server, check your internet connection.",
+                data = emptyList()))
+        }
+        val newFoodJokes: List<FoodJoke> = foodJokeDao.readFoodJoke().map { it.toFoodJoke() }
+        emit(Resource.Success(newFoodJokes))
+    }
 }

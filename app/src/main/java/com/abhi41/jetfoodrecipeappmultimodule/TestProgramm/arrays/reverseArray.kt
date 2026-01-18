@@ -2,6 +2,11 @@ package com.abhi41.jetfoodrecipeappmultimodule.TestProgramm.arrays
 
 fun main(){
     val arr = intArrayOf(1, 2, 3, 4)
+    reverseNumber(arr)
+
+}
+
+private fun reverseNumber(arr: IntArray) {
     var start = 0
     var end = arr.size - 1
 

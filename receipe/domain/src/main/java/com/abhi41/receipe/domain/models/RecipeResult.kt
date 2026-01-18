@@ -22,7 +22,7 @@ data class RecipeResult(
 
 @Serializable
 data class ExtendedIngredien(
-    val amount: Double,
+    val amount: String,
     val consistency: String,
     val image: String?,
     val name: String,

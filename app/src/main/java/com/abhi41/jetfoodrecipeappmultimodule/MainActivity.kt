@@ -14,6 +14,8 @@ import com.abhi41.jetfoodrecipeappmultimodule.navigation.RecipeNavGraph
 import com.abhi41.jetfoodrecipeappmultimodule.ui.theme.JetFoodRecipeAppMultiModuleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 
 
 @AndroidEntryPoint
@@ -25,7 +27,6 @@ class MainActivity : ComponentActivity() {
             JetFoodRecipeAppMultiModuleTheme {
                 val navhostController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
                     NavHost(
                         navController = navhostController,
                         startDestination = RecipeNavGraph.Destination.Root

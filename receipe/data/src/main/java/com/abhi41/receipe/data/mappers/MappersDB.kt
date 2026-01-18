@@ -1,8 +1,11 @@
 package com.abhi41.receipe.data.mappers
 
+import com.abhi41.core_network.dtos.food_joke.FoodJokeDto
 import com.abhi41.receipe.data.mappers.toDomainExtendedIngredient
+import com.abhi41.receipe.domain.models.FoodJoke
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.recipe.core_database.entity.FavoriteEntity
+import com.abhi41.recipe.core_database.entity.FoodJokeEntity
 
 // Mapper function to convert from the Domain model TO the Database entity
 fun RecipeResult.toFavoriteEntity(): FavoriteEntity {
@@ -43,6 +46,18 @@ fun FavoriteEntity.toRecipeResult(): RecipeResult {
         extendedIngredients = this.extendedIngredients.toLocalIngredient(), // Assuming you have a reverse mapper for ingredients
         glutenFree = this.glutenFree,
         sourceName = this.sourceName
+    )
+}
+
+fun FoodJokeDto.toFoodJokeEntity(): FoodJokeEntity{
+    return FoodJokeEntity(
+        text = text
+    )
+}
+
+fun FoodJokeEntity.toFoodJoke(): FoodJoke{
+    return FoodJoke(
+        text = text
     )
 }
 

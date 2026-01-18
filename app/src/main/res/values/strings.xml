@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JetFoodRecipeAppMultiModule</string>
+    <string name="app_name_test">Abhijeet</string>
 </resources>

@@ -171,6 +171,7 @@ fun DashBoardScreen(
             navController = navController,
             startDestination = BottomNavScreen.Recipes.route
         ) {
+            val bottomPadding = innerPadding.calculateBottomPadding()
             composable(BottomNavScreen.Recipes.route) {
                 RecipesScreen(
                     modifier = Modifier
@@ -183,13 +184,20 @@ fun DashBoardScreen(
             }
             composable(BottomNavScreen.Favorites.route) {
                 FavoritesScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = bottomPadding),
                     onNavigationClick = { result ->
                         onNavigationClick(result)
                     }
                 )
             }
             composable(BottomNavScreen.Joke.route) {
-                JokeScreen(modifier)
+                JokeScreen(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(bottom = bottomPadding)
+                )
             }
         }
 

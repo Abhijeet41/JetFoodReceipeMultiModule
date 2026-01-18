@@ -127,6 +127,8 @@ fun RecipeItem(item: RecipeResult, onNavigationClick: (RecipeResult) -> Unit) {
         model = item.image,
         error = painterResource(id = R.drawable.ic_error_placeholder)
     )
+    val cleanSummary = Jsoup.parse(item.summary).text()
+
     Box(
         modifier = Modifier
             .border(
@@ -169,7 +171,7 @@ fun RecipeItem(item: RecipeResult, onNavigationClick: (RecipeResult) -> Unit) {
                     )
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        text = Jsoup.parse(item.summary).text(),
+                        text = cleanSummary,
                         color = MaterialTheme.colorScheme.descriptionColor,
                         style = MaterialTheme.typography.bodySmall,
                         overflow = TextOverflow.Ellipsis,
@@ -235,7 +237,7 @@ private fun InfoColumn(icon: Int, text: String, color: Color) {
 }
 
 @Composable
-fun AnimatedShimmer() {
+fun AnimatedShimmer(modifier: Modifier = Modifier) {
     val shimmerColors = listOf(
         Color.LightGray.copy(alpha = 0.6f),
         Color.LightGray.copy(alpha = 0.2f),
@@ -258,7 +260,9 @@ fun AnimatedShimmer() {
         end = Offset(x = translateAnimation.value, translateAnimation.value)
     )
 
-    Column() {
+    Column(
+        modifier = modifier
+    ) {
         repeat(6) {
             ShimmerListItem(brush = brush)
         }

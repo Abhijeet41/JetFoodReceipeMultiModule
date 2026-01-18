@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.abhi41.receipe.ui.theme.TXT_MEDIUM_SIZE
 import com.abhi41.receipe.ui.theme.topAppBarBackgroundColor
+import com.abhi41.receipe.ui.theme.topAppBarContentColor
 import kotlinx.coroutines.launch
 import kotlin.text.equals
 
@@ -49,7 +50,7 @@ fun FavoriteTopBar(
             Text(
                 text = if (checkTitleNotNull) "Favorite" else state.value.actionModeTitle,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = MaterialTheme.colorScheme.topAppBarContentColor
             )
         },
         actions = {

@@ -25,18 +25,6 @@ fun reverse(str: String)  {
 }
 
 fun reverseNumber(num: Int) {
-   /* var temp = num.toString()
-    println(temp)
-    var result = ""
-
-    var lastIndex = temp.length - 1
-
-    for (i in 0..lastIndex) {
-        result = result + temp[lastIndex]
-        lastIndex--
-    }
-    println(result)*/
-
     var result = ""
     var strNum = num.toString()
 
@@ -64,20 +52,6 @@ fun reverseArrayByCreatingNewOne(char: CharArray) {
 
 
 }
-
-/*fun reverseNumberWithOutConvertedIntoString(num: Int) {
-    println("Input: $num")
-    var number = num
-    var reversedInt = 0
-    var lastDigit = 0
-    while (number > 0) {
-        lastDigit = number % 10   //5 , 4
-        reversedInt = reversedInt * 10 + lastDigit
-        number = number / 10 //1234,
-    }
-    println(reversedInt)
-
-}*/
 
 fun reverseNumberWithOutConvertedIntoString(num: Int) {
     var number = num

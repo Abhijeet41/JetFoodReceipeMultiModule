@@ -3,6 +3,7 @@ package com.abhi41.recipe.core_database.di
 import android.content.Context
 import androidx.room.Room
 import com.abhi41.recipe.core_database.converters.RecipesTypeConverter
+import com.abhi41.recipe.core_database.dao.FoodJokeDao
 import com.abhi41.recipe.core_database.dao.RecipesDao
 import com.abhi41.recipe.core_database.database.RecipesDatabase
 import com.abhi41.recipe.core_database.utils.Constants
@@ -43,5 +44,10 @@ object DatabaseModule {
       return database.recipeDao()
     }
 
+    @Singleton
+    @Provides
+    fun provideFoodJokeDao(database: RecipesDatabase): FoodJokeDao{
+        return database.foodJokeDao()
+    }
 
 }

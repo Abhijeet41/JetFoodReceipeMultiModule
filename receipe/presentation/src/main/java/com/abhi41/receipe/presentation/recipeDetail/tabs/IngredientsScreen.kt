@@ -167,7 +167,7 @@ fun IngredientItem(ingredient: ExtendedIngredien) {
 @Composable
 private fun IngredientsScreenPrev() {
     val mockIngredient = ExtendedIngredien(
-        amount = 2.0,
+        amount = "2.0",
         consistency = "SOLID",
         image = "flour.png", // Just the image name, as your code adds the base URL
         name = "All-purpose flour",
@@ -182,7 +182,7 @@ private fun IngredientsScreenPrev() {
 private fun IngredientItemPreview() {
     // 1. Create a mock 'ExtendedIngredien' object to simulate real data.
     val mockIngredient = ExtendedIngredien(
-        amount = 2.0,
+        amount = "2.0",
         consistency = "SOLID",
         image = "flour.png", // Just the image name, as your code adds the base URL
         name = "All-purpose flour",

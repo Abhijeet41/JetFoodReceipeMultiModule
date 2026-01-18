@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import java.lang.Exception
 
 @Composable
 fun InstructionScreen(sourceUrl: String) {
@@ -20,18 +21,22 @@ fun WebviewContent(sourceUrl: String, modifier: Modifier, ) {
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            WebView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                settings.javaScriptEnabled = true
-                loadUrl(sourceUrl)
-            }
+           try {
+                WebView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    settings.javaScriptEnabled = true
+                    loadUrl(sourceUrl)
+                }
+           }catch (e: Exception){
+                e.printStackTrace()
+               WebView(context)
+           }
         }, update = {
             it.loadUrl(sourceUrl)
         }
 
     )
 }
-

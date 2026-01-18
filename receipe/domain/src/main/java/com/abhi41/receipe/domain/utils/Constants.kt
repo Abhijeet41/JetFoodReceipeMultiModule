@@ -8,4 +8,7 @@ object Constants {
     const val PREFERENCES_NAME = "foody_preferences"
     const val PREFERENCES_MEAL_TYPE = "mealType"
     const val PREFERENCES_DIET_TYPE = "dietType"
+
+    const val API_KEY = "4b1d5ec4278045d2a16c8bf467004700"
+
 }
