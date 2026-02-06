@@ -154,7 +154,7 @@ fun DashBoardScreen(
 
         if (showBottomSheet) {
             BottomSheetDesign(
-                sheetState,
+                sheetState = sheetState,
                 onSelect = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {

@@ -81,6 +81,12 @@ fun RecipesScreen(
         }
     } else if (recipesState.recipesItem.isNotEmpty()) {
         RecipeDesignContent(modifier, recipesState.recipesItem, { result ->
+            viewModel.logRecipeClickedEvent(
+                recipeId = result.recipeId.toString(),
+                recipeName = result.title,
+                screenName = "Recipes Screen",
+            )
+            viewModel.trackScreen()
             onNavigationClick(result)
         })
     }

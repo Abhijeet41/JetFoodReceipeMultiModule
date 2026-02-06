@@ -16,13 +16,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.ui.res.stringResource
+import androidx.core.view.WindowCompat
+import com.google.firebase.analytics.FirebaseAnalytics
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             JetFoodRecipeAppMultiModuleTheme {
                 val navhostController = rememberNavController()

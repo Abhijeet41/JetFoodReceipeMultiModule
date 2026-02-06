@@ -11,23 +11,26 @@ import javax.inject.Inject
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.abhi41.receipe.domain.repository.AnalyticsTracker
 import com.abhi41.receipe.domain.repository.PreferencesRepository
 import com.abhi41.receipe.domain.utils.Diet
 import com.abhi41.receipe.domain.utils.DietType
 import com.abhi41.receipe.domain.utils.Meal
 import com.abhi41.receipe.domain.utils.MealAndDietType
 import com.abhi41.receipe.domain.utils.MealType
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG = "RecipesViewModel"
+
 @HiltViewModel
 class RecipesViewModel @Inject constructor(
     private val getAllRecipesUseCase: GetAllRecipesUseCase,
-    private val prefRepo: PreferencesRepository
-
+    private val prefRepo: PreferencesRepository,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
     var selectedMealType = mutableStateOf(MealType.getMeals().get(0))
     var selectedDietType = mutableStateOf(DietType.getDiets().get(0))
@@ -51,6 +54,31 @@ class RecipesViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun logRecipeClickedEvent(
+        recipeId: String,
+        recipeName: String,
+        screenName: String
+    ) {
+        analyticsTracker.logEvent(
+            eventName = "recipe_clicked",
+            params = mapOf(
+                "event_id" to recipeId,
+                "recipe_name" to recipeName,
+                "screen_name" to screenName,
+            )
+        )
+    }
+
+    fun trackScreen() {
+        analyticsTracker.logEvent(
+            eventName = FirebaseAnalytics.Event.SCREEN_VIEW, // Correct, standard event name
+            params = mapOf(
+                FirebaseAnalytics.Param.SCREEN_NAME to "RecipeListScreen", // Correct parameter name
+                FirebaseAnalytics.Param.SCREEN_CLASS to "RecipesScreen"    // Good practice to include class/composable name
+            )
+        )
     }
 
     fun getRecipes(mealType: Meal, dietType: Diet) {
@@ -93,7 +121,7 @@ class RecipesViewModel @Inject constructor(
     private fun saveMealAndDietType(meal: String, diet: String) {
         viewModelScope.launch(Dispatchers.IO) {
             mealAndDietType = MealAndDietType(
-                meal,diet
+                meal, diet
             )
             prefRepo.saveMealAndDietType(mealAndDietType)
         }

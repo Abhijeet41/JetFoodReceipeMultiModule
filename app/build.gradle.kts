@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
    // alias(libs.plugins.ksp)
     kotlin("kapt")
+    alias(libs.plugins.google.gms.services)
 }
 
 android {
@@ -42,6 +43,11 @@ android {
     buildFeatures {
         compose = true
     }
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/java")
+        }
+    }
 }
 
 dependencies {
@@ -67,7 +73,8 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.navigation.compose)
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
 
     testImplementation(libs.junit)

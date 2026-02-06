@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "367054950453",
+    "project_id": "jetpackfoodrecipe",
+    "storage_bucket": "jetpackfoodrecipe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367054950453:android:cdb9fb5a92ce304a1da17c",
+        "android_client_info": {
+          "package_name": "com.abhi41.jetfoodrecipeappmultimodule"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0zMBCDzqYYuE5TBDgYl8sUpOdKOaW1ZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

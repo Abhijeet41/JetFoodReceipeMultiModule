@@ -2,6 +2,7 @@ package com.abhi41.jetfoodrecipeappmultimodule.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -50,6 +51,7 @@ object RecipeNavGraph : BaseNavGraph {
         navGraphBuilder.navigation<Destination.Root>(
             startDestination = Destination.SplashScreen
         ) {
+
             composable<Destination.SplashScreen> {
                 SplashScreen(modifier = modifier.fillMaxSize()) {
                     navController.navigate(Destination.Dashboard) {
@@ -92,6 +94,7 @@ object RecipeNavGraph : BaseNavGraph {
                 }
             }
             composable<Destination.Search> {
+
                 SearchScreen(
                     onClosedClicked = {
                         navController.popBackStack()

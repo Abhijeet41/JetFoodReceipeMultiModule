@@ -54,26 +54,19 @@ fun JokeScreen(
 
             val state by foodJokeViewModel.foodJokeState
 
-            if (state.isLoading){
+            if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     showLoader(
                         modifier,
                         topPadding
                     )
                 }
-            }else if (state.foodJoke.isNotEmpty()){
-                foodJokeDesign(modifier, topPadding,state.foodJoke){
+            } else if (state.foodJoke.isNotEmpty()) {
+                   foodJokeDesign(modifier, topPadding, state.foodJoke) {//call api on card click listener
                     foodJokeViewModel.getFoodJoke()
                 }
             }
 
-         /*   if (state.foodJoke.isEmpty()) {
-                foodJokeViewModel.getFoodJoke()
-            } else {
-                foodJokeDesign(modifier, topPadding,state.foodJoke){
-                    foodJokeViewModel.getFoodJoke()
-                }
-            }*/
         }
     )
 }
@@ -103,7 +96,7 @@ private fun foodJokeDesign(
         )
         Card(
             modifier = Modifier
-                .clickable{
+                .clickable {
                     callJokeApi()
                 }
                 .wrapContentHeight()
@@ -137,7 +130,7 @@ private fun foodJokeDesign(
 private fun showLoader(
     modifier: Modifier,
     topPadding: Dp,
-){
+) {
     val painter = if (isSystemInDarkTheme())
         painterResource(id = R.drawable.ic_food_joke_background_dark)
     else painterResource(id = R.drawable.ic_food_joke_background)
