@@ -1,9 +1,17 @@
 package com.abhi41.jetfoodrecipeappmultimodule.navigation
 
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -16,10 +24,6 @@ import com.abhi41.receipe.presentation.recipeDetail.DetailedScreen
 import com.abhi41.receipe.presentation.search.SearchScreen
 import com.abhi41.receipe.presentation.splash.SplashScreen
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import kotlin.reflect.typeOf
 
 object RecipeNavGraph : BaseNavGraph {
@@ -46,8 +50,11 @@ object RecipeNavGraph : BaseNavGraph {
     override fun build(
         modifier: Modifier,
         navController: NavHostController,
-        navGraphBuilder: NavGraphBuilder
+        navGraphBuilder: NavGraphBuilder,
+        isLightMode: Boolean,
+        onThemeUpdated: () -> Unit
     ) {
+
         navGraphBuilder.navigation<Destination.Root>(
             startDestination = Destination.SplashScreen
         ) {
@@ -64,6 +71,8 @@ object RecipeNavGraph : BaseNavGraph {
                 }
             }
             composable<Destination.Dashboard> {
+
+
                 DashBoardScreen(
                     modifier = modifier.fillMaxSize(),
                     onSearchClicked = {
@@ -76,7 +85,9 @@ object RecipeNavGraph : BaseNavGraph {
                         navController.navigate(
                             Destination.DetailedScreen(result)
                         )
-                    }
+                    },
+                    isLightMode = isLightMode,
+                    onThemeUpdated = onThemeUpdated
                 )
             }
             composable<Destination.DetailedScreen>(

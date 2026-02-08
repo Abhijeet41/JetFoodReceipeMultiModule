@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,6 +16,11 @@ import com.abhi41.jetfoodrecipeappmultimodule.ui.theme.JetFoodRecipeAppMultiModu
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -29,8 +35,14 @@ class MainActivity : ComponentActivity() {
         //WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            JetFoodRecipeAppMultiModuleTheme {
+            // Lift dark mode state to MainActivity
+            val systemTheme = isSystemInDarkTheme()
+            var isLightMode = rememberSaveable { mutableStateOf(systemTheme) }
+            JetFoodRecipeAppMultiModuleTheme(
+                darkTheme = isLightMode.value
+            ) {
                 val navhostController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navhostController,
@@ -44,7 +56,9 @@ class MainActivity : ComponentActivity() {
                                     .padding(innerPadding)
                                     .fillMaxSize(),
                                 navController = navhostController,
-                                navGraphBuilder = this
+                                navGraphBuilder = this,
+                                isLightMode = isLightMode.value,
+                                onThemeUpdated = { isLightMode.value = !isLightMode.value }
                             )
 
                         }

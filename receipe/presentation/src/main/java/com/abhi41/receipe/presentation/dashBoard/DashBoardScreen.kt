@@ -4,6 +4,7 @@ package com.abhi41.receipe.presentation.dashBoard
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,12 +43,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -82,7 +85,9 @@ import kotlinx.coroutines.launch
 fun DashBoardScreen(
     modifier: Modifier = Modifier,
     onNavigationClick: (RecipeResult) -> Unit,
-    onSearchClicked:() ->Unit
+    onSearchClicked: () -> Unit,
+    onThemeUpdated: () -> Unit,
+    isLightMode: Boolean
 ) {
     val navController: NavHostController = rememberNavController()
     // 2. Get the current route to use in the BackHandler logic
@@ -111,6 +116,7 @@ fun DashBoardScreen(
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
+
         bottomBar = {
             BottomNavigationBar(navController, items)
         },
@@ -145,9 +151,12 @@ fun DashBoardScreen(
         topBar = {
             // Only show the TopBar if the current route is the Recipes screen
             if (currentRoute == BottomNavScreen.Recipes.route) {
-                RecipesTopBar() {
-                    onSearchClicked()
-                }
+
+                RecipesTopBar(
+                    onSearchClicked = onSearchClicked,
+                    isLightMode = isLightMode,
+                    onThemeUpdated = onThemeUpdated
+                )
             }
         },
     ) { innerPadding ->
@@ -290,12 +299,16 @@ private fun BottomSheetDesign(
 
 @Composable
 fun RecipesTopBar(
-    onSearchClicked: () -> Unit
+    onSearchClicked: () -> Unit,
+    isLightMode: Boolean,
+    onThemeUpdated: () -> Unit
 ) {
+
+
     TopAppBar(
         title = {
             Text(
-                text = "Search...",
+                text = "Recipes",
                 color = MaterialTheme.colorScheme.topAppBarContentColor
             )
         }, colors = TopAppBarDefaults.topAppBarColors(
@@ -308,7 +321,18 @@ fun RecipesTopBar(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search Icons",
-                    tint = Color.White
+                    tint = White
+                )
+            }
+            IconButton(onClick = onThemeUpdated) {
+                Icon(
+                    painter = if (isLightMode) {
+                        painterResource(id = R.drawable.ic_moon) // Your half-moon icon
+                    } else {
+                        painterResource(id = R.drawable.ic_sun) // Your sun icon
+                    },
+                    contentDescription = "Toggle Dark Mode",
+                    tint = White
                 )
             }
         }
@@ -353,8 +377,8 @@ fun BottomNavigationBar(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White,
-                    selectedTextColor = Color.White,
+                    selectedIconColor = White,
+                    selectedTextColor = White,
                     unselectedIconColor = Color.Gray,
                     unselectedTextColor = Color.Gray,
                     indicatorColor = Color(0xFF6200EE) // background for selected item
@@ -367,5 +391,11 @@ fun BottomNavigationBar(
 @Preview
 @Composable
 private fun DashBoardScreenPrev() {
-    DashBoardScreen(modifier = Modifier, onNavigationClick = {}, onSearchClicked = {})
+    DashBoardScreen(
+        modifier = Modifier,
+        onNavigationClick = {},
+        onSearchClicked = {},
+        onThemeUpdated = {},
+        isLightMode = isSystemInDarkTheme()
+    )
 }

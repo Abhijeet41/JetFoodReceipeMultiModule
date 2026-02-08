@@ -9,7 +9,9 @@ interface BaseNavGraph {
     fun build(
         modifier: Modifier = Modifier,
         navController: NavHostController,
-        navGraphBuilder: NavGraphBuilder
+        navGraphBuilder: NavGraphBuilder,
+        isLightMode: Boolean = false,
+        onThemeUpdated: () -> Unit = {}
     )
 
 }

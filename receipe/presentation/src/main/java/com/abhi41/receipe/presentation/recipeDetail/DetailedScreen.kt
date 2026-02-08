@@ -61,9 +61,8 @@ fun DetailedScreen(
         }
     )
     val coroutineScope = rememberCoroutineScope()
-    // --- THIS IS THE FIX ---
-    // 3. Add the BackHandler composable
-    BackHandler(enabled = true) {
+    
+    val   backAction = {
         if (pagerState.currentPage > 0) {
             // If the user is on "Ingredients" or "Instruction", go back to "Overview"
             coroutineScope.launch {
@@ -74,6 +73,11 @@ fun DetailedScreen(
             onBackClicked()
         }
     }
+
+    BackHandler(enabled = true) {
+        backAction()
+    }
+
     LaunchedEffect(key1 = Unit) {
         result = recipeResult
         Log.d(TAG, "DetailedScreen: ${recipeResult.recipeId} ${recipeResult.image}")
@@ -87,7 +91,7 @@ fun DetailedScreen(
                 favoriteRecipes = favoritesRecipes.value,
                 selectedRecipe = recipeResult,
                 onBackArrowClicked = {
-                    onBackClicked()
+                    backAction()
                 },
                 onFavoriteClicked = { isRecipeSaved ->
                     if (isRecipeSaved) {
