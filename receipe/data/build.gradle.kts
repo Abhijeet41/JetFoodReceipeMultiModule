@@ -40,7 +40,9 @@ dependencies {
     implementation(project(":core-network"))
     implementation(project(":receipe:domain"))
     implementation(project(":core-database"))
-
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,6 +55,8 @@ dependencies {
     implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

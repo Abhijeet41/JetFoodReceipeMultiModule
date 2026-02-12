@@ -1,8 +1,6 @@
 package com.abhi41.receipe.data.repository
 
-import android.net.http.HttpException
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresExtension
 import com.abhi41.core_network.service.FoodRecipesApi
 import com.abhi41.receipe.data.mappers.toDomainRecipes
@@ -19,8 +17,9 @@ import com.abhi41.recipe.core_database.dao.FoodJokeDao
 import com.abhi41.recipe.core_database.dao.RecipesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import java.io.IOException
+import okio.IOException
+import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 private const val TAG = "RecipesRepositoryImpl"
 
@@ -65,16 +64,42 @@ class RecipesRepositoryImpl(
     override fun getSearchRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> = flow {
             emit(Resource.Loading())
             try {
-                val result = api.searchRecipes(queries)
-                val recipes = result.results.toDomainRecipes()
-                emit(Resource.Loading(data = recipes))
-                emit(Resource.Success(data = recipes))
+                val response = api.searchRecipes(queries)
+                if (!response.isSuccessful){
+                    emit(Resource.Error(
+                        data = emptyList(),
+                        message = "The requested resource was not found."
+                    ))
+                }
+                when (response.code()) {
+                    HttpURLConnection.HTTP_OK -> { // Code 200
+                        val recipes = response.body()?.results?.toDomainRecipes()
+                        if (recipes != null) {
+                            emit(Resource.Success(data = recipes))
+                        } else {
+                            emit(Resource.Error(message = "No recipes found.", data = emptyList()))
+                        }
+                    }
+                    HttpURLConnection.HTTP_UNAUTHORIZED, HttpURLConnection.HTTP_FORBIDDEN -> { // Codes 401, 403
+                        emit(Resource.Error(message = "Unauthorized access. Please check your API key.", data = emptyList()))
+                    }
+                    HttpURLConnection.HTTP_NOT_FOUND -> { // Code 404
+                        emit(Resource.Error(message = "The requested resource was not found.", data = emptyList()))
+                    }
+                    else -> { // Handle other server-side errors (5xx) or unexpected codes
+                        emit(Resource.Error(message = "Server error: ${response.code()}", data = emptyList()))
+                    }
+                }
+
             } catch (e: HttpException) {
                 emit(Resource.Error(message ="Oops, something went wrong!", data = emptyList()))
             } catch (e: IOException) {
                 emit(Resource.Error(message = "Couldn't reach server, check your internet connection.",
                     data = emptyList()))
+            }catch (e: Exception) {
+                emit(Resource.Error(message = "Oops, something went wrong!", data = emptyList()))
             }
+
         }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)

@@ -32,6 +32,8 @@ composeMaterial = "1.5.6"
 jetbrainsKotlinJvm = "2.0.21"
 firebase = "34.8.0"
 googleGmsServices = "4.4.4"
+coroutines = "1.7.1"
+mockito = "5.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -91,6 +93,9 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -103,4 +108,3 @@ dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" } # <-- Change this line
 google-gms-services = { id = "com.google.gms.google-services", version.ref = "googleGmsServices" }
-
