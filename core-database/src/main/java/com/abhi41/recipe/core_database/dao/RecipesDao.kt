@@ -31,6 +31,9 @@ interface RecipesDao {
     @Delete
     suspend fun deleteFavoriteRecipe(favoriteEntity: FavoriteEntity)
 
+    @Query("DELETE FROM favorite_recipes_table WHERE recipeId = :recipeId")
+    suspend fun deleteFavoriteRecipeById(recipeId: Int)
+
     @Query("DELETE FROM favorite_recipes_table")
     suspend fun deleteAllFavoriteRecipes()
 

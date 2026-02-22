@@ -31,11 +31,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.abhi41.receipe.data.mappers.toRecipeResult
 import com.abhi41.receipe.domain.models.RecipeResult
@@ -127,27 +129,32 @@ fun FavoritesScreen(
                 val color = if (isSelected) MaterialTheme.colorScheme.strokeBorderColor
                 else MaterialTheme.colorScheme.cardStrokeBorder
 
-                FavoriteFoodItem(result, color, onNavigationClick = {//handle single click event
-                    if (state.value.isContextual || state.value.multiSelection) {
-                        applicationSelection(
-                            currentRecipe = result,
-                            state
-                        )
-                    } else {
-                        onNavigationClick(result.toRecipeResult())
-                    }
-                }) { //handle long click event
+                FavoriteFoodItem(
+                    result = result,
+                    color = color,
+                    imageLoader = viewModel.imageLoader,
+                    onNavigationClick = {//handle single click event
+                        if (state.value.isContextual || state.value.multiSelection) {
+                            applicationSelection(
+                                currentRecipe = result,
+                                state
+                            )
+                        } else {
+                            onNavigationClick(result.toRecipeResult())
+                        }
+                    },
+                    onLongClick = {
+                        //handle long click event
 
-                    //if multiSelection is false then enabled it true and show contextual appbar
-                    if (!state.value.multiSelection) {
-                        state.value = state.value.copy(
-                            isContextual = true,
-                            multiSelection = true
-                        )
-                        applicationSelection(result, state)
-                    }
-
-                }
+                        //if multiSelection is false then enabled it true and show contextual appbar
+                        if (!state.value.multiSelection) {
+                            state.value = state.value.copy(
+                                isContextual = true,
+                                multiSelection = true
+                            )
+                            applicationSelection(result, state)
+                        }
+                    })
             }
         }
     }
@@ -158,7 +165,8 @@ fun FavoriteFoodItem(
     result: FavoriteEntity,
     color: Color,
     onNavigationClick: (RecipeResult) -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    imageLoader: ImageLoader
 ) {
     val foodImage = rememberAsyncImagePainter(
         model = result.image,
@@ -304,7 +312,8 @@ private fun FavoriteFoodItemPreview() {
         result = mockFavorite,
         color = MaterialTheme.colorScheme.cardStrokeBorder,
         onNavigationClick = { /* Clicks are disabled in preview */ },
-        onLongClick = { /* Long clicks are disabled in preview */ }
+        onLongClick = { /* Long clicks are disabled in preview */ },
+        imageLoader = ImageLoader.Builder(LocalContext.current).build()
     )
 }
 

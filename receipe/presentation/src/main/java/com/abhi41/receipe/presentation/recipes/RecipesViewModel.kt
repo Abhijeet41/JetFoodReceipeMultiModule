@@ -11,6 +11,7 @@ import javax.inject.Inject
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import coil.ImageLoader
 import com.abhi41.receipe.domain.repository.AnalyticsTracker
 import com.abhi41.receipe.domain.repository.PreferencesRepository
 import com.abhi41.receipe.domain.utils.Diet
@@ -30,7 +31,8 @@ private const val TAG = "RecipesViewModel"
 class RecipesViewModel @Inject constructor(
     private val getAllRecipesUseCase: GetAllRecipesUseCase,
     private val prefRepo: PreferencesRepository,
-    private val analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: AnalyticsTracker,
+    val imageLoader: ImageLoader
 ) : ViewModel() {
     var selectedMealType = mutableStateOf(MealType.getMeals().get(0))
     var selectedDietType = mutableStateOf(DietType.getDiets().get(0))

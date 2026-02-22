@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,21 +31,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.R
@@ -100,7 +100,8 @@ fun RecipesScreen(
 fun RecipeDesignContent(
     modifier: Modifier,
     recipesItem: List<RecipeResult>,
-    onNavigationClick: (RecipeResult) -> Unit
+    onNavigationClick: (RecipeResult) -> Unit,
+    viewModel: RecipesViewModel = hiltViewModel()
 ) {
     LazyColumn(
         modifier = modifier,
@@ -124,14 +125,19 @@ fun RecipeDesignContent(
             RecipeItem(
                 it, { result ->
                     onNavigationClick(result)
-                }
+                },
+                viewModel.imageLoader
             )
         }
     }
 }
 
 @Composable
-fun RecipeItem(item: RecipeResult, onNavigationClick: (RecipeResult) -> Unit) {
+fun RecipeItem(
+    item: RecipeResult,
+    onNavigationClick: (RecipeResult) -> Unit,
+    imageLoader: ImageLoader
+) {
     val foodImage = rememberAsyncImagePainter(
         model = item.image,
         error = painterResource(id = R.drawable.ic_error_placeholder)
@@ -158,13 +164,15 @@ fun RecipeItem(item: RecipeResult, onNavigationClick: (RecipeResult) -> Unit) {
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(
+                AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight(),
-                    painter = foodImage,
+                    model = item.image,
+                    imageLoader = imageLoader,
+                    contentDescription = "",
+                    placeholder = painterResource(id = R.drawable.ic_placeholder),
                     contentScale = ContentScale.Crop,
-                    contentDescription = ""
                 )
                 Column(
                     modifier = Modifier
@@ -389,8 +397,10 @@ private fun RecipeItemPrev() {
             vegetarian = true,
             veryHealthy = true
 
-        )
-    ) {}
+        ),
+        {},
+        imageLoader = ImageLoader.Builder(LocalContext.current).build()
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -398,6 +408,8 @@ private fun RecipeItemPrev() {
 private fun RecipeDesignContentPrew() {
     RecipeDesignContent(
         Modifier.fillMaxSize(),
+        viewModel = hiltViewModel(),
+        onNavigationClick = {},
         recipesItem = listOf(
             RecipeResult(
                 aggregateLikes = 1,
@@ -417,9 +429,9 @@ private fun RecipeDesignContentPrew() {
                 veryHealthy = true
             )
         )
-    ) {
+    )
 
-    }
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)

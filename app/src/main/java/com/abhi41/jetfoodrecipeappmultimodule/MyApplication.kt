@@ -5,6 +5,13 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.webkit.WebView
+import androidx.compose.runtime.staticCompositionLocalOf
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.util.DebugLogger
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -34,5 +41,6 @@ class MyApplication: Application() {
             }
         }
     }
+
 
 }

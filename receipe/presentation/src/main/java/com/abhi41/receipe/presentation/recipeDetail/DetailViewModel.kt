@@ -15,19 +15,22 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     val recipesDao: RecipesDao
-): ViewModel(){
+) : ViewModel() {
     //read flow recipes of favorite as a livedata
     val readFavoriteRecipes = recipesDao.readFavoriteRecipes().asLiveData()
 
 
-    fun insertFavoriteRecipes(recipes: FavoriteEntity){
-        viewModelScope.launch (Dispatchers.IO){
+    fun insertFavoriteRecipes(recipes: FavoriteEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
             recipesDao.insertFavoriteRecipe(favoriteEntity = recipes)
         }
     }
 
     suspend fun deleteFavoriteRecipe(favoriteEntity: FavoriteEntity) {
         return recipesDao.deleteFavoriteRecipe(favoriteEntity = favoriteEntity)
+    }
+    suspend fun deleteFavoriteRecipeById(recipeId: Int) {
+        recipesDao.deleteFavoriteRecipeById(recipeId)
     }
 
     suspend fun deleteAllFavoriteRecipes() {

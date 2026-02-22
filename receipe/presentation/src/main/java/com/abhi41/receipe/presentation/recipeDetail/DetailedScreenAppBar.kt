@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +29,13 @@ import com.abhi41.recipe.core_database.entity.FavoriteEntity
 fun DetailedScreenAppBar(
     onBackArrowClicked: () -> Unit,
     onFavoriteClicked: (isRecipeSaved: Boolean) -> Unit,
-    favoriteRecipes: List<FavoriteEntity>?,
-    selectedRecipe: RecipeResult?
+    selectedRecipe: RecipeResult?,
+    favoritesRecipes: List<FavoriteEntity>,
 ) {
-    var isRecipeSaved by remember {
-        mutableStateOf(false)
+
+
+    val isRecipeSaved = remember(favoritesRecipes) {
+        favoritesRecipes.any { it.recipeId == selectedRecipe?.recipeId }
     }
     TopAppBar(
         title = {
@@ -51,20 +54,10 @@ fun DetailedScreenAppBar(
         },
         actions = {
 
-            if (!favoriteRecipes.isNullOrEmpty()){
-                for (recipe in favoriteRecipes){
-                    if (recipe.recipeId == selectedRecipe?.recipeId){
-                        isRecipeSaved = true
-                    }
-                }
-
-            }
-
             AppBarIcon(
                 icon = R.drawable.ic_favorite,
                 isRecipeSaved = isRecipeSaved,
                 onClick = {
-                    isRecipeSaved = !isRecipeSaved
                     onFavoriteClicked(isRecipeSaved)
                 }
             )
@@ -90,7 +83,7 @@ private fun DetailedScreenAppBarPrev() {
     DetailedScreenAppBar(
         onBackArrowClicked = {},
         onFavoriteClicked = {},
-        favoriteRecipes = null,
-        selectedRecipe = null
+        selectedRecipe = null,
+        favoritesRecipes = emptyList(),
     )
 }

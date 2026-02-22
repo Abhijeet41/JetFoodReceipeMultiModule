@@ -1,8 +1,7 @@
-package com.abhi41.receipe.presentation.recipeDetail.tabs
+package com.abhi41.receipe.presentation.recipeDetail.tabs.overview
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,18 +22,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -44,12 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import coil.compose.ImagePainter
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.R
@@ -65,9 +60,13 @@ import org.jsoup.Jsoup
 
 @OptIn(ExperimentalMotionApi::class)
 @Composable
-fun OverviewScreen(selectedFoodItem: RecipeResult) {
-    val context = LocalContext.current
+fun OverviewScreen(
+    selectedFoodItem: RecipeResult,
+    viewModel: OverViewScreenViewModel = hiltViewModel()
 
+) {
+    val context = LocalContext.current
+    val imageLoader = viewModel.imageLoader
 
     // --- FIX 2: Create a NestedScrollConnection ---
     // This connection will listen to scroll events and update the progress.
@@ -84,14 +83,14 @@ fun OverviewScreen(selectedFoodItem: RecipeResult) {
         animationSpec = tween(1000)
     )
 
-    Scaffold (){innerPadding ->
+    Scaffold() { innerPadding ->
 
         MotionLayout(
             motionScene = MotionScene(content = motionScene),
             progress = buttonAnimationProgress,
             modifier = Modifier
                 .fillMaxWidth()
-               // .padding(innerPadding)
+                // .padding(innerPadding)
                 .wrapContentHeight()
                 .background(MaterialTheme.colorScheme.motionLayoutBg)
 
@@ -101,15 +100,18 @@ fun OverviewScreen(selectedFoodItem: RecipeResult) {
                 error(R.drawable.ic_error_placeholder)
             }
             ImageSection(
-                recipeImg,
+                selectedFoodItem.image,
                 selectedFoodItem.aggregateLikes,
-                selectedFoodItem.readyInMinutes
+                selectedFoodItem.readyInMinutes,
+                imageLoader
             )
             Spacer(modifier = Modifier.height(SMALL_PADDING))
             TitleAndCategorySection(
                 selectedItem = selectedFoodItem,
                 onClick = {
                     animateButton = !animateButton
+                    imageLoader?.diskCache?.clear()
+                    imageLoader?.memoryCache?.clear()
                 }
             )
             Spacer(modifier = Modifier.height(SMALL_PADDING))
@@ -123,9 +125,10 @@ fun OverviewScreen(selectedFoodItem: RecipeResult) {
 
 @Composable
 fun ImageSection(
-    recipeImg: ImagePainter,
+    recipeImg: String,
     aggregateLikes: Int? = 1225,
-    readyInMinutes: Int? = 40
+    readyInMinutes: Int? = 40,
+    imageLoader: ImageLoader
 ) {
     Box(
         modifier = Modifier
@@ -133,11 +136,13 @@ fun ImageSection(
             .layoutId("imgFood"),
         contentAlignment = Alignment.BottomEnd
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp),
-            painter = recipeImg,
+                .aspectRatio(1280f / 847f),
+            model = recipeImg,
+            imageLoader = imageLoader,
+            placeholder = painterResource(R.drawable.ic_error_placeholder),
             contentDescription = "Food Image",
             contentScale = ContentScale.Crop
         )
@@ -338,10 +343,10 @@ private fun ImageSectionPrev() {
         crossfade(600)
         error(R.drawable.ic_error_placeholder)
     }
+
     ImageSection(
-        recipeImg,
-        aggregateLikes = 1225,
-        readyInMinutes = 40
+        "https://img.spoonacular.com/recipes/637016-312x231.jpg",
+        imageLoader = ImageLoader(LocalContext.current)
     )
 }
 
@@ -387,7 +392,7 @@ fun RowCategoriesPrev() {
     RowCategories(R.drawable.ic_checkmark, "Vegan", true)
 }
 
-@Preview(showBackground = true,showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun OverviewScreenPrev() {
     val mockRecipe = RecipeResult(

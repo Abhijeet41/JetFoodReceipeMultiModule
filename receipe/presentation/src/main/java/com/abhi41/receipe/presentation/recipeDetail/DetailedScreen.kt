@@ -36,9 +36,8 @@ import com.abhi41.receipe.data.mappers.toFavoriteEntity
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.recipeDetail.tabs.IngredientsScreen
 import com.abhi41.receipe.presentation.recipeDetail.tabs.InstructionScreen
-import com.abhi41.receipe.presentation.recipeDetail.tabs.OverviewScreen
+import com.abhi41.receipe.presentation.recipeDetail.tabs.overview.OverviewScreen
 import com.abhi41.receipe.ui.theme.tabBackgroundColor
-import com.abhi41.recipe.core_database.entity.FavoriteEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -51,6 +50,7 @@ fun DetailedScreen(
     detailViewModel: DetailViewModel = hiltViewModel(),
     onBackClicked: () -> Unit,
 ) {
+    val favoritesRecipes = detailViewModel.readFavoriteRecipes.observeAsState(emptyList())
     var result by remember { mutableStateOf<RecipeResult?>(null) }
     val tabItems = listOf("Overview", "Ingredients", "Instruction")
     val pagerState = rememberPagerState(
@@ -80,26 +80,27 @@ fun DetailedScreen(
 
     LaunchedEffect(key1 = Unit) {
         result = recipeResult
-        Log.d(TAG, "DetailedScreen: ${recipeResult.recipeId} ${recipeResult.image}")
+        Log.d(TAG, "DetailedScreen LaunchedEffect: ${recipeResult.recipeId} ${recipeResult.image}")
     }
-    val favoritesRecipes = detailViewModel.readFavoriteRecipes.observeAsState()
 
     Scaffold(
 
         topBar = {
             DetailedScreenAppBar(
-                favoriteRecipes = favoritesRecipes.value,
+                favoritesRecipes = favoritesRecipes.value,
                 selectedRecipe = recipeResult,
                 onBackArrowClicked = {
                     backAction()
                 },
                 onFavoriteClicked = { isRecipeSaved ->
+                    //check whether favorite recipe saved or not
                     if (isRecipeSaved) {
-                        detailViewModel.insertFavoriteRecipes(recipes = recipeResult.toFavoriteEntity())
-                    } else {
                         coroutineScope.launch (Dispatchers.IO){
-                            detailViewModel.deleteFavoriteRecipe(recipeResult.toFavoriteEntity())
+                            //detailViewModel.deleteFavoriteRecipe(recipeResult.toFavoriteEntity())
+                            detailViewModel.deleteFavoriteRecipeById(recipeResult.recipeId)
                         }
+                    } else {
+                        detailViewModel.insertFavoriteRecipes(recipes = recipeResult.toFavoriteEntity())
                     }
 
                 }
