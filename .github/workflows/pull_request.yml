@@ -3,31 +3,25 @@ name: Run test
 on:
   pull_request:
     branches: [setp2_integrate_recepie_module]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    steps:                        # ← moved inside 'build'
+      - uses: actions/checkout@v4
 
-  steps:
-    - uses: actions/checkout@v4
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin' # ← also fixed: 'focal' is invalid here
+          cache: 'gradle'
 
-    - name: Setup JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'focal'
-        cache: 'gradle'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Grant exectute permission for gradlew
-      run: chmod +x gradlew
+      - name: Run Unit Test
+        run: ./gradlew :receipe:test
 
-    - name: Run Unit Test
-      run: ./gradlew :receipe:test
-
-    - name: Run gradle build
-      run: ./gradlew :receipe:build
-
-
-
-
-
-
+      - name: Run gradle build
+        run: ./gradlew :receipe:build
