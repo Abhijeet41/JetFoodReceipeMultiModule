@@ -72,7 +72,6 @@ object RecipeNavGraph : BaseNavGraph {
             }
             composable<Destination.Dashboard> {
 
-
                 DashBoardScreen(
                     modifier = modifier.fillMaxSize(),
                     onSearchClicked = {

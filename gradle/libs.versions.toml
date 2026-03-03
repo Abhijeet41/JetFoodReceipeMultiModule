@@ -34,6 +34,7 @@ firebase = "34.8.0"
 googleGmsServices = "4.4.4"
 coroutines = "1.7.1"
 mockito = "5.3.1"
+dexter = "6.2.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -95,6 +96,8 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+dexter = { group = "com.karumi", name = "dexter", version.ref = "dexter" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

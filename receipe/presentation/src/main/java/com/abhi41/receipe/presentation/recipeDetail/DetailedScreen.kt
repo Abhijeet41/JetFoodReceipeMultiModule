@@ -193,7 +193,6 @@ fun HorizontalPagerCompose(
             0 -> {
                 OverviewScreen(selectedFoodItem)
             }
-
             1 -> {
                 IngredientsScreen(selectedFoodItem.extendedIngredients)
             }

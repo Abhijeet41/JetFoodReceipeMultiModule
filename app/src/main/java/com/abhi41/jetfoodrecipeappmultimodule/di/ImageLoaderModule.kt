@@ -16,9 +16,10 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object ImageLoaderModule {
 
+    @Singleton
     @Provides
     fun provideImageLoader(
         @ApplicationContext context: Context
