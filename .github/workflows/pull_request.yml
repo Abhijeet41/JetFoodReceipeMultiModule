@@ -21,7 +21,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Test
-        run: ./gradlew :receipe:test
+        run: ./gradlew :receipe:data:testDebugUnitTest
 
       - name: Run gradle build
         run: ./gradlew :receipe:build
