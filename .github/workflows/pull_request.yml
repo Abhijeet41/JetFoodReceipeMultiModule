@@ -2,12 +2,12 @@ name: Run test
 
 on:
   pull_request:
-    branches: [setp2_integrate_recepie_module]
+    branches: [ setp2_integrate_recepie_module ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:                        # ← moved inside 'build'
+    steps: # ← moved inside 'build'
       - uses: actions/checkout@v4
 
       - name: Setup JDK 17
@@ -20,11 +20,31 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-#      - name: Run Unit Test
-#        run: ./gradlew :receipe:data:testDebugUnitTest
+      #      - name: Run Unit Test
+      #        run: ./gradlew :receipe:data:testDebugUnitTest
 
       - name: Run Unit Test
         run: ./gradlew clean testDebug
 
       - name: Run gradle build
         run: ./gradlew :receipe:build
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: ./gradlew sonar
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+      # ──────────────────────────────────────────────
+      # Step 5 (Optional): Quality Gate check — FAIL the build
+      #         if SonarQube quality gate is not passed
+      # ──────────────────────────────────────────────
+      - name: SonarQube Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

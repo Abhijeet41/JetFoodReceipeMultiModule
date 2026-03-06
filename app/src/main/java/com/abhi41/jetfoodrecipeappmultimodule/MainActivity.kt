@@ -25,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import coil.ImageLoader
+import com.abhi41.receipe.presentation.new_recipe_ui.CulinaShareTheme
+import com.abhi41.receipe.presentation.new_recipe_ui.RecipesScreen
 import com.abhi41.receipe.presentation.utils.LocalImageLoader
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
@@ -33,7 +35,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
+   @Inject
     lateinit var imageLoader: ImageLoader
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,5 +77,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        /*setContent {
+            CulinaShareTheme {
+                RecipesScreen()
+            }
+        }*/
     }
 }
