@@ -8,6 +8,7 @@ plugins {
    // alias(libs.plugins.ksp)
     kotlin("kapt")
     alias(libs.plugins.google.gms.services)
+   // alias(libs.plugins.sonarqube)
 }
 
 android {
