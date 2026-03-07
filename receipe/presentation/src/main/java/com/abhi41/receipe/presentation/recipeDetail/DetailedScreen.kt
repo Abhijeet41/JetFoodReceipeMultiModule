@@ -38,6 +38,7 @@ import com.abhi41.receipe.presentation.recipeDetail.tabs.IngredientsScreen
 import com.abhi41.receipe.presentation.recipeDetail.tabs.InstructionScreen
 import com.abhi41.receipe.presentation.recipeDetail.tabs.overview.OverviewScreen
 import com.abhi41.receipe.ui.theme.tabBackgroundColor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -45,7 +46,6 @@ private const val TAG = "DetailedScreen"
 
 @Composable
 fun DetailedScreen(
-    modifier: Modifier = Modifier,
     recipeResult: RecipeResult,
     detailViewModel: DetailViewModel = hiltViewModel(),
     onBackClicked: () -> Unit,
@@ -61,18 +61,8 @@ fun DetailedScreen(
         }
     )
     val coroutineScope = rememberCoroutineScope()
-    
-    val   backAction = {
-        if (pagerState.currentPage > 0) {
-            // If the user is on "Ingredients" or "Instruction", go back to "Overview"
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(0)
-            }
-        } else {
-            // If the user is already on "Overview", perform the normal back action
-            onBackClicked()
-        }
-    }
+
+    val backAction = rememberBackAction(pagerState, coroutineScope, onBackClicked)
 
     BackHandler(enabled = true) {
         backAction()
@@ -94,14 +84,7 @@ fun DetailedScreen(
                 },
                 onFavoriteClicked = { isRecipeSaved ->
                     //check whether favorite recipe saved or not
-                    if (isRecipeSaved) {
-                        coroutineScope.launch (Dispatchers.IO){
-                            //detailViewModel.deleteFavoriteRecipe(recipeResult.toFavoriteEntity())
-                            detailViewModel.deleteFavoriteRecipeById(recipeResult.recipeId)
-                        }
-                    } else {
-                        detailViewModel.insertFavoriteRecipes(recipes = recipeResult.toFavoriteEntity())
-                    }
+                    handleFavoriteClick(isRecipeSaved, detailViewModel, recipeResult)
 
                 }
             )
@@ -176,6 +159,39 @@ fun DetailedScreen(
 
 }
 
+private fun handleFavoriteClick(
+    isRecipeSaved: Boolean,
+    detailViewModel: DetailViewModel,
+    recipeResult: RecipeResult
+) {
+    if (isRecipeSaved) {
+        detailViewModel.deleteFavoriteRecipeById(recipeResult.recipeId)
+    } else {
+        detailViewModel.insertFavoriteRecipes(recipes = recipeResult.toFavoriteEntity())
+    }
+}
+
+@Composable
+private fun rememberBackAction(
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope,
+    onBackClicked: () -> Unit
+): () -> Unit {
+    return remember(pagerState) {
+        {
+            if (pagerState.currentPage > 0) {
+                // If the user is on "Ingredients" or "Instruction", go back to "Overview"
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+            } else {
+                // If the user is already on "Overview", perform the normal back action
+                onBackClicked()
+            }
+        }
+    }
+}
+
 @Composable
 fun HorizontalPagerCompose(
     pagerState: PagerState,
@@ -193,6 +209,7 @@ fun HorizontalPagerCompose(
             0 -> {
                 OverviewScreen(selectedFoodItem)
             }
+
             1 -> {
                 IngredientsScreen(selectedFoodItem.extendedIngredients)
             }

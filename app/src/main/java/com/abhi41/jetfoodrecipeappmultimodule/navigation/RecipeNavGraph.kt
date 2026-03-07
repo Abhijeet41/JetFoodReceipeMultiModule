@@ -97,7 +97,6 @@ object RecipeNavGraph : BaseNavGraph {
                 val arguments = backStackEntry.toRoute<Destination.DetailedScreen>()
 
                 DetailedScreen(
-                    modifier = modifier.fillMaxSize(),
                     recipeResult = arguments.recipeResult
                 ) {
                     navController.popBackStack()

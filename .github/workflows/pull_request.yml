@@ -33,9 +33,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: ./gradlew sonar
-          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        run: ./gradlew sonar \
+          -Dsonar.projectKey=Abhijeet41_JetFoodReceipeMultiModule \
+          -Dsonar.organization=abhijeet41 \
+          -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       # ──────────────────────────────────────────────
