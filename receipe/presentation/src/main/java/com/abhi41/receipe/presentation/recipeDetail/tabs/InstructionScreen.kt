@@ -27,7 +27,7 @@ fun WebviewContent(sourceUrl: String, modifier: Modifier, ) {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    settings.javaScriptEnabled = true
+                    settings.javaScriptEnabled = false
                     loadUrl(sourceUrl)
                 }
            }catch (e: Exception){

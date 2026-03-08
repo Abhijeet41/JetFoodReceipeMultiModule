@@ -1,5 +1,7 @@
 package com.abhi41.receipe.domain.utils
 
+import com.abhi41.receipe.domain.BuildConfig
+
 object Constants {
 
     const val DEFAULT_MEAL_TYPE = "MainCourse"
@@ -9,6 +11,6 @@ object Constants {
     const val PREFERENCES_MEAL_TYPE = "mealType"
     const val PREFERENCES_DIET_TYPE = "dietType"
 
-    const val API_KEY = "4b1d5ec4278045d2a16c8bf467004700"
+    val API_KEY = BuildConfig.API_KEY
 
 }

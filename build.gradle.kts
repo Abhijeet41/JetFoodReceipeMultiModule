@@ -1,5 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-import java.util.Properties
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -10,13 +9,6 @@ plugins {
     alias(libs.plugins.google.gms.services) apply false
     alias(libs.plugins.sonarqube)
 }
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
-}
-
-val sonarToken = localProperties.getProperty("SONAR_TOKEN") ?: System.getenv("SONAR_TOKEN") ?: ""
 
 sonar {
     properties {
@@ -24,8 +16,6 @@ sonar {
         property("sonar.organization", "abhijeet41")
         property("sonar.projectName", "JetFoodReceipeMultiModule")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.token", sonarToken)
-
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.android.lint.report", "build/reports/lint-results.xml")
     }

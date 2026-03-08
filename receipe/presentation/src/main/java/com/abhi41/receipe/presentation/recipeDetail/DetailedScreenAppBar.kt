@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.abhi41.receipe.domain.models.RecipeResult
 import com.abhi41.receipe.presentation.R
 import com.abhi41.receipe.presentation.utils.HexToJetpackColor
-import com.abhi41.receipe.ui.theme.darkYello
+import com.abhi41.receipe.ui.theme.DarkYellow
 import com.abhi41.receipe.ui.theme.titleColor
 import com.abhi41.recipe.core_database.entity.FavoriteEntity
 
@@ -72,7 +72,7 @@ fun AppBarIcon(icon: Int, isRecipeSaved: Boolean = false, onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = "Icon",
-            tint = if (isRecipeSaved) HexToJetpackColor.getColor(darkYello) else androidx.compose.ui.graphics.Color.White
+            tint = if (isRecipeSaved) DarkYellow else androidx.compose.ui.graphics.Color.White
         )
     }
 }

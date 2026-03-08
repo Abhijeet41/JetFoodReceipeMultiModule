@@ -24,9 +24,9 @@ import com.abhi41.receipe.presentation.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(modifier: Modifier = Modifier, onNavigate: () -> Unit) {
-    val context = LocalActivity.current
-    WindowCompat.setDecorFitsSystemWindows(context?.window,true)
+fun SplashScreen(onNavigate: () -> Unit) {
+    val context = LocalActivity.current!!
+    WindowCompat.setDecorFitsSystemWindows(context.window,true)
 
     var startAnimation by remember { mutableStateOf(false) }
     var alphaAnim = animateFloatAsState(
@@ -36,7 +36,6 @@ fun SplashScreen(modifier: Modifier = Modifier, onNavigate: () -> Unit) {
         )
     )
     LaunchedEffect(key1 = Unit) {
-        startAnimation = true
         delay(3000)
         onNavigate()
     }
