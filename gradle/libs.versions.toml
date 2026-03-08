@@ -100,6 +100,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 dexter = { group = "com.karumi", name = "dexter", version.ref = "dexter" }
 
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

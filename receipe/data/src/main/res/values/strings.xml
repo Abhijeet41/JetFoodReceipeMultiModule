@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="oops_something_went_wrong">Oops, something went wrong!</string>
+    <string name="couldn_t_reach_server_check_your_internet_connection">Couldn\'t reach server, check your internet connection.</string>
+    <string name="the_requested_resource_was_not_found">The requested resource was not found.</string>
+    <string name="no_recipes_found">No recipes found.</string>
+    <string name="unauthorized_access_please_check_your_api_key">Unauthorized access. Please check your API key.</string>
+</resources>
