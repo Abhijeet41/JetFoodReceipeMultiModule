@@ -8,6 +8,8 @@ plugins {
    // alias(libs.plugins.ksp)
     kotlin("kapt")
     alias(libs.plugins.google.gms.services)
+   // alias(libs.plugins.sonarqube)
+  //  alias(libs.plugins.hotswan.compiler)
 }
 
 android {
@@ -26,19 +28,28 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true // Enabled obfuscation
+            isShrinkResources = true // Added resource shrinking
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+        lint {
+            abortOnError = false
+            checkDependencies = true
+            baseline = file("lint-baseline.xml")
+        }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true

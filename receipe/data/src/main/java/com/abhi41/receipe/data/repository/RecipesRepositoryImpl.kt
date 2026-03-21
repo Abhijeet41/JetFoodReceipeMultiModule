@@ -1,8 +1,10 @@
 package com.abhi41.receipe.data.repository
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.abhi41.core_network.service.FoodRecipesApi
+import com.abhi41.receipe.data.R
 import com.abhi41.receipe.data.mappers.toDomainRecipes
 import com.abhi41.receipe.data.mappers.toFoodJoke
 import com.abhi41.receipe.data.mappers.toFoodJokeEntity
@@ -15,18 +17,21 @@ import com.abhi41.receipe.domain.utils.Constants
 import com.abhi41.receipe.domain.utils.Resource
 import com.abhi41.recipe.core_database.dao.FoodJokeDao
 import com.abhi41.recipe.core_database.dao.RecipesDao
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
 import retrofit2.HttpException
 import java.net.HttpURLConnection
+import javax.inject.Inject
 
 private const val TAG = "RecipesRepositoryImpl"
 
-class RecipesRepositoryImpl(
+class RecipesRepositoryImpl @Inject constructor(
     private val api: FoodRecipesApi,
     private val recipesDao: RecipesDao,
-    private val foodJokeDao: FoodJokeDao
+    private val foodJokeDao: FoodJokeDao,
+    @ApplicationContext private val context: Context
 ) : RecipesRepository {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun getRecipes(queries: Map<String, String>): Flow<Resource<List<RecipeResult>>> =
@@ -39,22 +44,20 @@ class RecipesRepositoryImpl(
                 val response = result.results.toDomainRecipes()
                 recipesDao.deleteAllRecipes()
                 recipesDao.insertRecipes(response.toInsertRecipes())
-                //Log.d(TAG, "getRecipes: ${response.joinToString()}")
-                //     emit(Resource.Success(data = response))
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error(message = "Oops, something went wrong!", data = null))
+                emit(Resource.Error(message = context.getString(R.string.oops_something_went_wrong), data = null))
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(
                     Resource.Error(
-                        message = "Couldn't reach server, check your internet connection.",
+                        message = context.getString(R.string.couldn_t_reach_server_check_your_internet_connection),
                         data = null
                     )
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
-                emit(Resource.Error(message = "Oops, something went wrong!", data = null))
+                emit(Resource.Error(message = context.getString(R.string.oops_something_went_wrong), data = null))
             }
             val newRecipes: List<RecipeResult> = recipesDao.readRecipes().toReadLocalRecipes()
             emit(Resource.Success(data = newRecipes))
@@ -68,7 +71,7 @@ class RecipesRepositoryImpl(
                 if (!response.isSuccessful){
                     emit(Resource.Error(
                         data = emptyList(),
-                        message = "The requested resource was not found."
+                        message = context.getString(R.string.the_requested_resource_was_not_found)
                     ))
                 }
                 when (response.code()) {
@@ -77,14 +80,14 @@ class RecipesRepositoryImpl(
                         if (recipes != null) {
                             emit(Resource.Success(data = recipes))
                         } else {
-                            emit(Resource.Error(message = "No recipes found.", data = emptyList()))
+                            emit(Resource.Error(message = context.getString(R.string.no_recipes_found), data = emptyList()))
                         }
                     }
                     HttpURLConnection.HTTP_UNAUTHORIZED, HttpURLConnection.HTTP_FORBIDDEN -> { // Codes 401, 403
-                        emit(Resource.Error(message = "Unauthorized access. Please check your API key.", data = emptyList()))
+                        emit(Resource.Error(message = context.getString(R.string.unauthorized_access_please_check_your_api_key), data = emptyList()))
                     }
                     HttpURLConnection.HTTP_NOT_FOUND -> { // Code 404
-                        emit(Resource.Error(message = "The requested resource was not found.", data = emptyList()))
+                        emit(Resource.Error(message = context.getString(R.string.the_requested_resource_was_not_found), data = emptyList()))
                     }
                     else -> { // Handle other server-side errors (5xx) or unexpected codes
                         emit(Resource.Error(message = "Server error: ${response.code()}", data = emptyList()))
@@ -92,12 +95,12 @@ class RecipesRepositoryImpl(
                 }
 
             } catch (e: HttpException) {
-                emit(Resource.Error(message ="Oops, something went wrong!", data = emptyList()))
+                emit(Resource.Error(message =context.getString(R.string.oops_something_went_wrong), data = emptyList()))
             } catch (e: IOException) {
-                emit(Resource.Error(message = "Couldn't reach server, check your internet connection.",
+                emit(Resource.Error(message = context.getString(R.string.couldn_t_reach_server_check_your_internet_connection),
                     data = emptyList()))
             }catch (e: Exception) {
-                emit(Resource.Error(message = "Oops, something went wrong!", data = emptyList()))
+                emit(Resource.Error(message = context.getString(R.string.oops_something_went_wrong), data = emptyList()))
             }
 
         }
@@ -109,10 +112,8 @@ class RecipesRepositoryImpl(
         emit(Resource.Loading(data = foodJokes))
         try {
             val remoteFoodJokes = api.getFoodJoke(apiKey = Constants.API_KEY)
-            if (remoteFoodJokes != null){
-                foodJokeDao.deleteAllFoodJoke()
-                foodJokeDao.insertFoodJoke(remoteFoodJokes.toFoodJokeEntity())
-            }
+            foodJokeDao.deleteAllFoodJoke()
+            foodJokeDao.insertFoodJoke(remoteFoodJokes.toFoodJokeEntity())
 
         } catch (e: HttpException) {
             emit(Resource.Error(message ="Oops, something went wrong!", data = emptyList()))

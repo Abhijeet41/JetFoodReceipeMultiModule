@@ -44,6 +44,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.abhi41.receipe.domain.models.RecipeResult
@@ -58,7 +59,7 @@ import com.abhi41.receipe.ui.theme.motionLayoutBg
 import com.abhi41.receipe.ui.theme.titleColor
 import org.jsoup.Jsoup
 
-@OptIn(ExperimentalMotionApi::class)
+@OptIn(ExperimentalMotionApi::class, ExperimentalCoilApi::class)
 @Composable
 fun OverviewScreen(
     selectedFoodItem: RecipeResult,
@@ -90,15 +91,12 @@ fun OverviewScreen(
             progress = buttonAnimationProgress,
             modifier = Modifier
                 .fillMaxWidth()
-                // .padding(innerPadding)
+                .padding(innerPadding)
                 .wrapContentHeight()
                 .background(MaterialTheme.colorScheme.motionLayoutBg)
 
         ) {
-            val recipeImg = rememberImagePainter(selectedFoodItem.image) {
-                crossfade(600)
-                error(R.drawable.ic_error_placeholder)
-            }
+
             ImageSection(
                 selectedFoodItem.image,
                 selectedFoodItem.aggregateLikes,
@@ -110,8 +108,8 @@ fun OverviewScreen(
                 selectedItem = selectedFoodItem,
                 onClick = {
                     animateButton = !animateButton
-                    imageLoader?.diskCache?.clear()
-                    imageLoader?.memoryCache?.clear()
+                    imageLoader.diskCache?.clear()
+                    imageLoader.memoryCache?.clear()
                 }
             )
             Spacer(modifier = Modifier.height(SMALL_PADDING))
@@ -316,7 +314,7 @@ fun RowCategories(
 fun DescriptionSection(
     summary: String?
 ) {
-    val summary = Jsoup.parse(summary).text()
+    val parsedSummary = Jsoup.parse(summary ?: "").text()
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState(1))
@@ -328,8 +326,7 @@ fun DescriptionSection(
             )
     ) {
         Text(
-            text = summary
-                ?: stringResource(R.string.descriptionDemo),
+            text = parsedSummary,
             color = MaterialTheme.colorScheme.descriptionColor,
             fontSize = TXT_MEDIUM_SIZE,
         )
@@ -339,10 +336,6 @@ fun DescriptionSection(
 @Preview(showBackground = true)
 @Composable
 private fun ImageSectionPrev() {
-    val recipeImg = rememberImagePainter("https://img.spoonacular.com/recipes/637016-312x231.jpg") {
-        crossfade(600)
-        error(R.drawable.ic_error_placeholder)
-    }
 
     ImageSection(
         "https://img.spoonacular.com/recipes/637016-312x231.jpg",

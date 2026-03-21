@@ -1,21 +1,130 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+############################################
+# Kotlin
+############################################
+-keep class kotlin.Metadata { *; }
+-dontwarn kotlin.**
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+############################################
+# Retrofit
+############################################
+-keepattributes Signature
+-keepattributes Exceptions
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keep class retrofit2.** { *; }
+-dontwarn retrofit2.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+############################################
+# OkHttp
+############################################
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+############################################
+# Gson (Retrofit Converter)
+############################################
+-keepattributes *Annotation*
+
+-keep class com.google.gson.** { *; }
+-dontwarn com.google.gson.**
+
+
+############################################
+# Kotlinx Serialization
+############################################
+-keep class kotlinx.serialization.** { *; }
+-keep class kotlinx.serialization.json.** { *; }
+
+-keepclassmembers class * {
+    @kotlinx.serialization.SerialName <fields>;
+}
+
+############################################
+# Hilt / Dagger
+############################################
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+
+-keep class * extends dagger.hilt.internal.GeneratedComponent { *; }
+
+-keep class hilt_aggregated_deps.** { *; }
+-keep class dagger.hilt.internal.aggregatedroot.codegen.** { *; }
+-keep class dagger.hilt.android.internal.managers.** { *; }
+
+-dontwarn dagger.hilt.**
+
+############################################
+# Room Database
+############################################
+-keep class androidx.room.** { *; }
+-dontwarn androidx.room.**
+
+############################################
+# Paging 3
+############################################
+-keep class androidx.paging.** { *; }
+-dontwarn androidx.paging.**
+
+############################################
+# Navigation Compose
+############################################
+-keep class androidx.navigation.** { *; }
+-dontwarn androidx.navigation.**
+
+############################################
+# Jetpack Compose
+############################################
+-keep class androidx.compose.** { *; }
+-dontwarn androidx.compose.**
+
+############################################
+# Coil Image Loader
+############################################
+-keep class coil.** { *; }
+-dontwarn coil.**
+
+############################################
+# Jsoup
+############################################
+-keep class org.jsoup.** { *; }
+-dontwarn org.jsoup.**
+
+############################################
+# DataStore
+############################################
+-keep class androidx.datastore.** { *; }
+
+############################################
+# Firebase
+############################################
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+
+############################################
+# Dexter Permission Library
+############################################
+-keep class com.karumi.dexter.** { *; }
+
+############################################
+# Coroutines
+############################################
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.coroutines.**
+
+############################################
+# Keep Application class
+############################################
+-keep class * extends android.app.Application { *; }
+
+############################################
+# Keep Parcelable
+############################################
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+# Keep your Domain Models (to prevent breaking serialization/mapping)
+-keep class com.abhi41.receipe.domain.models.** { *; }
+-keep class com.abhi41.recipe.core_database.entity.** { *; }
