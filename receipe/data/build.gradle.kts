@@ -2,8 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt )
-    // alias(libs.plugins.ksp)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,8 +29,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
     hilt {
         enableAggregatingTask = false
@@ -52,7 +53,7 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

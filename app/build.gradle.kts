@@ -5,10 +5,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt )
     alias(libs.plugins.kotlin.serialization)
-   // alias(libs.plugins.ksp)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     alias(libs.plugins.google.gms.services)
    // alias(libs.plugins.sonarqube)
+    alias(libs.plugins.hotswan.compiler)
 }
 
 android {
@@ -39,14 +39,19 @@ android {
             checkDependencies = true
             baseline = file("lint-baseline.xml")
         }
-
+        hotSwanCompiler {
+            enabled = true      // Master switch (default: true)
+            debugOnly = true    // Apply only to debug builds (default: true)
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
@@ -77,7 +82,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     // Dagger Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.navigation.compose)

@@ -63,11 +63,9 @@ import org.jsoup.Jsoup
 @Composable
 fun OverviewScreen(
     selectedFoodItem: RecipeResult,
-    viewModel: OverViewScreenViewModel = hiltViewModel()
-
+    imageLoader: ImageLoader = hiltViewModel<OverViewScreenViewModel>().imageLoader
 ) {
     val context = LocalContext.current
-    val imageLoader = viewModel.imageLoader
 
     // --- FIX 2: Create a NestedScrollConnection ---
     // This connection will listen to scroll events and update the progress.
@@ -405,5 +403,8 @@ private fun OverviewScreenPrev() {
         vegetarian = false,
         veryHealthy = true
     )
-    OverviewScreen(mockRecipe)
+    OverviewScreen(
+        selectedFoodItem = mockRecipe,
+        imageLoader = ImageLoader(LocalContext.current)
+    )
 }

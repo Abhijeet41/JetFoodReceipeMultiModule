@@ -8,7 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id ("kotlin-parcelize")
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hotswan.compiler)
 }
 
 android {
@@ -39,13 +40,19 @@ android {
                 "proguard-rules.pro"
             )
         }
+        hotSwanCompiler {
+            enabled = true      // Master switch (default: true)
+            debugOnly = true    // Apply only to debug builds (default: true)
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
@@ -60,7 +67,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.compose.material)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.coil.compose)
     implementation(libs.jsoup)
     implementation(libs.kotlinx.serialization.json)
