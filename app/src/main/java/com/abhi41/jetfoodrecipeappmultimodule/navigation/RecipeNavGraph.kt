@@ -60,7 +60,7 @@ object RecipeNavGraph : BaseNavGraph {
         ) {
 
             composable<Destination.SplashScreen> {
-                SplashScreen(modifier = modifier.fillMaxSize()) {
+                SplashScreen(onNavigate = {
                     navController.navigate(Destination.Dashboard) {
                         popUpTo(Destination.SplashScreen) {
                             inclusive =
@@ -68,7 +68,7 @@ object RecipeNavGraph : BaseNavGraph {
                         }
                     }
 
-                }
+                })
             }
             composable<Destination.Dashboard> {
 
@@ -119,4 +119,3 @@ object RecipeNavGraph : BaseNavGraph {
         }
     }
 }
-
