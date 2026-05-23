@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         //WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
             // Lift dark mode state to MainActivity
             val systemTheme = isSystemInDarkTheme()

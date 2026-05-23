@@ -1,6 +1,8 @@
 package com.abhi41.receipe.presentation.favorite
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,10 +19,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -28,6 +40,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -69,6 +82,7 @@ fun FavoritesScreen(
     val favoriteRecipe by viewModel.readFavoriteRecipes.observeAsState()
     var state = remember { mutableStateOf(FavoriteState()) }
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val onBack = { //handle on back pressed
         state.value = state.value.copy(
@@ -83,6 +97,8 @@ fun FavoritesScreen(
     }
 
     Scaffold(
+        modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             FavoriteTopBar(
                 viewModel = viewModel,
@@ -109,12 +125,11 @@ fun FavoritesScreen(
             }
         }
     ) { innerPadding ->
-        val topPadding = innerPadding.calculateTopPadding()
 
         LazyColumn(
-            modifier = modifier
-                .padding(top = topPadding)
-                .fillMaxHeight(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
             contentPadding = PaddingValues(SMALL_PADDING),
             verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
         ) {
@@ -129,32 +144,85 @@ fun FavoritesScreen(
                 val color = if (isSelected) MaterialTheme.colorScheme.strokeBorderColor
                 else MaterialTheme.colorScheme.cardStrokeBorder
 
-                FavoriteFoodItem(
-                    result = result,
-                    color = color,
-                    imageLoader = viewModel.imageLoader,
-                    onNavigationClick = {//handle single click event
-                        if (state.value.isContextual || state.value.multiSelection) {
-                            applicationSelection(
-                                currentRecipe = result,
-                                state
-                            )
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { dismissValue ->
+                        if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                viewModel.deleteFavoriteRecipe(result)
+                            }
+                            coroutineScope.launch {
+                                val snackbarResult = snackbarHostState.showSnackbar(
+                                    message = "Recipe deleted",
+                                    actionLabel = "UNDO",
+                                    duration = SnackbarDuration.Short
+                                )
+                                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                                    coroutineScope.launch(Dispatchers.IO) {
+                                        viewModel.insertFavoriteRecipe(result)
+                                    }
+                                }
+                            }
+                            true
                         } else {
-                            onNavigationClick(result.toRecipeResult())
+                            false
+                        }
+                    }
+                )
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    enableDismissFromStartToEnd = false,
+                    enableDismissFromEndToStart = true,
+                    backgroundContent = {
+                        val bgColor by animateColorAsState(
+                            targetValue = when (dismissState.targetValue) {
+                                SwipeToDismissBoxValue.Settled -> Color.Transparent
+                                else -> Color.Red
+                            }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(bgColor, RoundedCornerShape(size = MEDIUM_PADDING)),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = Color.White,
+                                modifier = Modifier.padding(end = 24.dp)
+                            )
                         }
                     },
-                    onLongClick = {
-                        //handle long click event
-
-                        //if multiSelection is false then enabled it true and show contextual appbar
-                        if (!state.value.multiSelection) {
-                            state.value = state.value.copy(
-                                isContextual = true,
-                                multiSelection = true
-                            )
-                            applicationSelection(result, state)
-                        }
-                    })
+                    content = {
+                        FavoriteFoodItem(
+                            result = result,
+                            color = color,
+                            imageLoader = viewModel.imageLoader,
+                            onNavigationClick = {//handle single click event
+                                if (state.value.isContextual || state.value.multiSelection) {
+                                    applicationSelection(
+                                        currentRecipe = result,
+                                        state
+                                    )
+                                } else {
+                                    onNavigationClick(result.toRecipeResult())
+                                }
+                            },
+                            onLongClick = {
+                                //handle long click event
+        
+                                //if multiSelection is false then enabled it true and show contextual appbar
+                                if (!state.value.multiSelection) {
+                                    state.value = state.value.copy(
+                                        isContextual = true,
+                                        multiSelection = true
+                                    )
+                                    applicationSelection(result, state)
+                                }
+                            })
+                    }
+                )
             }
         }
     }

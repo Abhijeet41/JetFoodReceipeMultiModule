@@ -22,6 +22,10 @@ class FavoritesViewModel @Inject constructor(
     suspend fun deleteAllFavoriteRecipes(){
         dao.deleteAllFavoriteRecipes()
     }
+
+    suspend fun insertFavoriteRecipe(favoriteEntity: FavoriteEntity){
+        dao.insertFavoriteRecipe(favoriteEntity = favoriteEntity)
+    }
 }
 
 

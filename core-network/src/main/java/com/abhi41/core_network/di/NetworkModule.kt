@@ -16,6 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import com.abhi41.core_network.gemini.GeminiApiService
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -70,5 +71,25 @@ object NetworkModule {
         retrofit: Retrofit
     ): FoodRecipesApi {
         return retrofit.create(FoodRecipesApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGeminiApiService(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): GeminiApiService {
+        val geminiClient = okHttpClient.newBuilder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+            
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://generativelanguage.googleapis.com/")
+            .client(geminiClient)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+        return retrofit.create(GeminiApiService::class.java)
     }
 }

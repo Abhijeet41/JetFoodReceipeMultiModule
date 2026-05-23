@@ -1,7 +1,10 @@
 package com.abhi41.receipe.presentation.recipeDetail.tabs.overview
 
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +69,6 @@ fun OverviewScreen(
     imageLoader: ImageLoader = hiltViewModel<OverViewScreenViewModel>().imageLoader
 ) {
     val context = LocalContext.current
-
     // --- FIX 2: Create a NestedScrollConnection ---
     // This connection will listen to scroll events and update the progress.
 
@@ -81,6 +83,7 @@ fun OverviewScreen(
         targetValue = if (animateButton) 1f else 0f,
         animationSpec = tween(1000)
     )
+
 
     Scaffold() { innerPadding ->
 
@@ -187,7 +190,7 @@ fun RowLikesAndTimeInfo(text: String, icon: Int) {
 }
 
 @Composable
-fun TitleAndCategorySection(selectedItem: RecipeResult, onClick: () -> Unit) {
+inline fun TitleAndCategorySection(selectedItem: RecipeResult, crossinline onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -275,6 +278,7 @@ fun ColumnCategory(selectedItem: RecipeResult?) {
             text = "Cheap",
             isVegetarian = isCheap
         )
+
     }
 
 

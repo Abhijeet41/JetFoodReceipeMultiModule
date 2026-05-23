@@ -45,6 +45,9 @@ object RecipeNavGraph : BaseNavGraph {
 
         @Serializable
         data object Search : Destination
+
+        @Serializable
+        data object Chat : Destination
     }
 
     override fun build(
@@ -77,6 +80,11 @@ object RecipeNavGraph : BaseNavGraph {
                     onSearchClicked = {
                         navController.navigate(
                             Destination.Search
+                        )
+                    },
+                    onChatClicked = {
+                        navController.navigate(
+                            Destination.Chat
                         )
                     },
                     onNavigationClick = { result ->
@@ -112,6 +120,14 @@ object RecipeNavGraph : BaseNavGraph {
                         navController.navigate(
                             Destination.DetailedScreen(result)
                         )
+                    }
+                )
+            }
+            
+            composable<Destination.Chat> {
+                com.abhi41.receipe.presentation.chat.ChatScreen(
+                    onBackClicked = {
+                        navController.popBackStack()
                     }
                 )
             }

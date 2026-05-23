@@ -67,7 +67,7 @@ fun DetailedScreenAppBar(
 }
 
 @Composable
-fun AppBarIcon(icon: Int, isRecipeSaved: Boolean = false, onClick: () -> Unit) {
+ fun AppBarIcon(icon: Int, isRecipeSaved: Boolean = false, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
             painter = painterResource(id = icon),
