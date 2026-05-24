@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.recipe.core_database"
+    namespace = "com.abhi46.recipe.core_database"
     compileSdk = 36
 
     defaultConfig {

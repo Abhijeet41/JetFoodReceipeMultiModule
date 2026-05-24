@@ -126,5 +126,5 @@
   public static final android.os.Parcelable$Creator *;
 }
 # Keep your Domain Models (to prevent breaking serialization/mapping)
--keep class com.abhi41.receipe.domain.models.** { *; }
--keep class com.abhi41.recipe.core_database.entity.** { *; }
+-keep class com.abhi46.receipe.domain.models.** { *; }
+-keep class com.abhi46.recipe.core_database.entity.** { *; }

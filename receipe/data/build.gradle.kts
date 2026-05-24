@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.receipe.data"
+    namespace = "com.abhi46.receipe.data"
     compileSdk = 36
 
     defaultConfig {

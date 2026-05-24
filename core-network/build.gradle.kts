@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.core_network"
+    namespace = "com.abhi46.core_network"
     compileSdk = 36
 
     defaultConfig {

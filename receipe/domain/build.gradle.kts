@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.receipe.domain"
+    namespace = "com.abhi46.receipe.domain"
     compileSdk = 36
 
     val localProperties = Properties()

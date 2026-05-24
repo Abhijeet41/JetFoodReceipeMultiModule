@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.jetfoodrecipeappmultimodule"
+    namespace = "com.abhi46.jetfoodrecipeappmultimodule"
     compileSdk = 36
 
     defaultConfig {

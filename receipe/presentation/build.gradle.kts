@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    namespace = "com.abhi41.receipe.presentation"
+    namespace = "com.abhi46.receipe.presentation"
     compileSdk = 36
 
     val localProperties = Properties()
